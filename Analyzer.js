@@ -1,35 +1,36 @@
-//
-// GraphicalFilterEditor is distributed under the FreeBSD License
-//
-// Copyright (c) 2012-2015, Carlos Rafael Gimenes das Neves
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-// 1. Redistributions of source code must retain the above copyright notice, this
-//    list of conditions and the following disclaimer.
-// 2. Redistributions in binary form must reproduce the above copyright notice,
-//    this list of conditions and the following disclaimer in the documentation
-//    and/or other materials provided with the distribution.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-// ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
-// The views and conclusions contained in the software and documentation are those
-// of the authors and should not be interpreted as representing official policies,
-// either expressed or implied, of the FreeBSD Project.
-//
-// https://github.com/carlosrafaelgn/GraphicalFilterEditor
-//
+/**
+ * GraphicalFilterEditor is distributed under the FreeBSD License
+ *
+ * Copyright (c) 2012-2017 Armando Meziat, Carlos Rafael Gimenes das Neves
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those
+ * of the authors and should not be interpreted as representing official policies,
+ * either expressed or implied, of the FreeBSD Project.
+ *
+ * https://github.com/kantoradio/canvas-equalizer
+ */
+
 "use strict";
 
 function Analyzer(audioContext, graphicEqualizer) {
@@ -67,7 +68,7 @@ function Analyzer(audioContext, graphicEqualizer) {
 			window.msCancelAnimationFrame ||
 			function (id) { return window.clearTimeout(id); });
 	}
-	
+
 	for (i = 0; i < 1024; i++) {
 		this.window[i] =
 		// Adjust coefficient (the original C++ code was
@@ -81,7 +82,7 @@ function Analyzer(audioContext, graphicEqualizer) {
 		// 145 is just a gain to make the analyzer look good! :)
 		this.multiplier[i] = invln10 * 145 * exp(2.5 * i / 511);
 	}
-	seal$(this);
+	//seal$(this);
 	return true;
 }
 Analyzer.prototype = {
@@ -126,6 +127,9 @@ Analyzer.prototype = {
 		this.lastRequest = null;
 		return true;
 	},
+	lerp: function(x0, y0, x1, y1, x) {
+		return ((x - x0) * (y1 - y0) / (x1 - x0)) + y0;
+	},
 	realAnalyze: function () {
 		// All the 0.5's here are because of this explanation:
 		// http://stackoverflow.com/questions/195262/can-i-turn-off-antialiasing-on-an-html-canvas-element
@@ -135,7 +139,7 @@ Analyzer.prototype = {
 		var d, im, i, w = this.window, tmp = this.tmp, data = this.data, ctx = this.ctx, sqrt = Math.sqrt, ln = Math.log,
 				freq, ii, avg, avgCount,
 				valueCount = 512, bw = this.sampleRate / 2048,
-				filterLength2 = (2048 >>> 1), cos = Math.cos, lerp = GraphicalFilterEditor.prototype.lerp,
+				filterLength2 = (2048 >>> 1), cos = Math.cos, lerp = Analyzer.prototype.lerp,
 				visibleFrequencies = this.visibleFrequencies, colors = Analyzer.prototype.colors;
 		if (!this.alive) return false;
 

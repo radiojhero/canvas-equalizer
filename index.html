@@ -2,9 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
 	<meta charset="utf-8" />
-	<script type="text/javascript">//<![CDATA[
-		"use strict"; (function () { var vp = document.createElement("meta"); vp.setAttribute("name", "viewport"); vp.setAttribute("content", ((screen.availWidth >= 544) || (screen.availHeight >= 544)) ? "width=device-width, initial-scale=1" : "width=544"); document.head.appendChild(vp); })(); //]]>
-	</script>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="Shortcut Icon" href="/favicon.ico" />
 	<title>Graphical Filter Editor (Test)</title>
 	<style type="text/css">
@@ -15,9 +13,9 @@
 			color: #fff;
 		}
 		body, input, button, select {
-			font: normal 16px 'Segoe UI', sans-serif;
+			font: normal 16px system-ui, -apple-system, 'Segoe UI', sans-serif;
 		}
-		p {
+		p, ul {
 			font-size: 12px;
 			color: #999;
 		}
@@ -41,11 +39,9 @@
 			display: none;
 		}
 	</style>
-	<link rel="stylesheet" href="GraphicalFilterEditor.css" />
-	<script type="text/javascript" charset="utf-8" src="Common.js"></script>
+	<link rel="stylesheet" href="dist/css/CanvasEqualizer.css" />
 	<script type="text/javascript" charset="utf-8" src="FFTNR.js"></script>
-	<script type="text/javascript" charset="utf-8" src="GraphicalFilterEditor.js"></script>
-	<script type="text/javascript" charset="utf-8" src="GraphicalFilterEditorControl.js"></script>
+	<script type="text/javascript" charset="utf-8" src="dist/js/CanvasEqualizer.js"></script>
 	<script type="text/javascript" charset="utf-8" src="Analyzer.js"></script>
 	<script type="text/javascript" charset="utf-8" src="AnalyzerWL.js"></script>
 	<script type="text/javascript" charset="utf-8" src="Program.js"></script>
@@ -54,6 +50,9 @@
 		//<![CDATA[
 		"use strict";
 		var audioContext, source, sourceAudio, graphicEqualizer, splitter, analyzer, analyzerType, merger, pendingUrls, chkSource;
+		function $(e) {
+			return document.getElementById(e);
+		}
 		//fakeAudioContext was created only to act as a "null audio context", making at least the graph work in other browsers
 		function fakeAudioContext() {
 		}
@@ -99,9 +98,10 @@
 		};
 		function main() {
 			pendingUrls = [];
-			attachMouse($("btnPlay"), "click", play);
-			attachMouse($("btnStop"), "click", stop);
-			attachMouse($("btnProcess"), "click", processAndDownload);
+			$("btnPlay").addEventListener("click", play);
+			$("btnStop").addEventListener("click", stop);
+			$("btnProcess").addEventListener("click", processAndDownload);
+			$("btnReset").addEventListener("click", reset);
 			chkSource = [$("chkSource0"), $("chkSource1"), $("chkSource2")];
 			chkSource[0].addEventListener("change", chkSource_Change);
 			chkSource[1].addEventListener("change", chkSource_Change);
@@ -111,7 +111,7 @@
 			$("cbFilterLength").addEventListener("change", filterLengthChanged);
 			$("cbAnalyzer").addEventListener("change", updateConnections);
 			audioContext = (window.AudioContext ? new AudioContext() : (window.webkitAudioContext ? new webkitAudioContext() : new fakeAudioContext()));
-			graphicEqualizer = new GraphicalFilterEditorControl(2048, audioContext);
+			graphicEqualizer = new CanvasEqualizer(2048, audioContext);
 			graphicEqualizer.createControl($("equalizerPlaceholder"));
 			analyzerType = null;
 			analyzer = null;
@@ -191,7 +191,7 @@
 				source.disconnect(0);
 				source = null;
 			}
-			graphicEqualizer.filter.convolver.disconnect(0);
+			graphicEqualizer.convolver.disconnect(0);
 			//Free all created URL's only at safe moments!
 			freeObjURLs();
 			return cleanUpAnalyzer();
@@ -207,7 +207,7 @@
 		function updateConnections() {
 			var t = $("cbAnalyzer").value;
 			if (!source) return false;
-			graphicEqualizer.filter.convolver.disconnect(0);
+			graphicEqualizer.convolver.disconnect(0);
 			switch (t) {
 				case "soundParticles":
 				case "fft":
@@ -217,19 +217,19 @@
 						analyzerType = t;
 						switch (t) {
 							case "soundParticles":
-								analyzer = new SoundParticles(audioContext, graphicEqualizer.filter);
+								analyzer = new SoundParticles(audioContext, graphicEqualizer);
 								break;
 							case "fft":
-								analyzer = new Analyzer(audioContext, graphicEqualizer.filter);
+								analyzer = new Analyzer(audioContext, graphicEqualizer);
 								break;
 							case "wl":
-								analyzer = new AnalyzerWL(audioContext, graphicEqualizer.filter);
+								analyzer = new AnalyzerWL(audioContext, graphicEqualizer);
 								break;
 						}
 						analyzer.createControl($("analyzerPlaceholder"));
 					}
 
-					graphicEqualizer.filter.convolver.connect(splitter, 0, 0);
+					graphicEqualizer.convolver.connect(splitter, 0, 0);
 					splitter.connect(analyzer.analyzerL, 0, 0);
 					splitter.connect(analyzer.analyzerR, 1, 0);
 
@@ -239,12 +239,12 @@
 					merger.connect(audioContext.destination, 0, 0);
 					return analyzer.start();
 				default:
-					graphicEqualizer.filter.convolver.connect(audioContext.destination, 0, 0);
+					graphicEqualizer.convolver.connect(audioContext.destination, 0, 0);
 					return cleanUpAnalyzer();
 			}
 		}
 		function filterLengthChanged() {
-			graphicEqualizer.changeFilterLength(parseInt($("cbFilterLength").value));
+			graphicEqualizer.filterLength = parseInt($("cbFilterLength").value);
 			return true;
 		}
 		function finishLoadingIntoMemoryAndPlay(array, name, offline) {
@@ -260,9 +260,9 @@
 							source = offlineAudioContext.createBufferSource();
 							source.buffer = buffer;
 							source.loop = false;
-							graphicEqualizer.changeAudioContext(offlineAudioContext);
-							source.connect(graphicEqualizer.filter.convolver, 0, 0);
-							graphicEqualizer.filter.convolver.connect(offlineAudioContext.destination, 0, 0);
+							graphicEqualizer.audioContext = offlineAudioContext;
+							source.connect(graphicEqualizer.convolver, 0, 0);
+							graphicEqualizer.convolver.connect(offlineAudioContext.destination, 0, 0);
 							source.start(0);
 							offlineAudioContext.oncomplete = function (renderedData) {
 								var worker = new Worker("WaveExporterWorker.js"),
@@ -296,8 +296,8 @@
 							source = audioContext.createBufferSource();
 							source.buffer = buffer;
 							source.loop = true;
-							graphicEqualizer.changeAudioContext(audioContext);
-							source.connect(graphicEqualizer.filter.convolver, 0, 0);
+							graphicEqualizer.audioContext = audioContext;
+							source.connect(graphicEqualizer.convolver, 0, 0);
 							updateConnections();
 							source.start(0);
 							showLoader(false);
@@ -362,11 +362,12 @@
 			} else {
 				sourceAudio = new Audio("midnightride.mp3");
 			}
+			sourceAudio.crossOrigin = "anonymous";
 			sourceAudio.loop = true;
 			source = audioContext.createMediaElementSource(sourceAudio);
 			sourceAudio.load();
-			graphicEqualizer.changeAudioContext(audioContext);
-			source.connect(graphicEqualizer.filter.convolver, 0, 0);
+			graphicEqualizer.audioContext = audioContext;
+			source.connect(graphicEqualizer.convolver, 0, 0);
 			updateConnections();
 			sourceAudio.play();
 			$("btnStop").disabled = "";
@@ -429,6 +430,9 @@
 			}
 			return true;
 		}
+		function reset() {
+			graphicEqualizer.reset();
+		}
 		//]]>
 	</script>
 </head>
@@ -464,8 +468,10 @@ or<br />
 	<option value="soundParticles">Sound Particles</option>
 	<option value="fft">Frequency analyzer</option>
 	<option value="wl">Haar wavelet analyzer</option>
-</select></div></div>
-<div id="equalizerPlaceholder"></div><div id="analyzerPlaceholder" style="vertical-align: top; display: inline-block; margin-left: 16px;"></div>
+</select>
+<div class="SEP"></div>
+<button id="btnReset">Reset filter curve(s)</button></div></div>
+<div id="equalizerPlaceholder" style="width:100%;height:calc(100vh - 100px);"></div><div id="analyzerPlaceholder" style="vertical-align: top; display: inline-block; margin-left: 16px;"></div>
 <p>This work was presented at <a href="http://www.cictem.com.ar/home.html">CICTEM 2013</a>, in Argentina! :D <img alt="CICTEM 2013" src="cictem.png" width="250" height="98" /></p>
 <p>Download links for the documentation:<br />
 	<a href="presentation.pdf">Presentation</a><br />
@@ -473,9 +479,22 @@ or<br />
 	English paper coming soon!
 </p>
 <div class="SEP"></div>
-<p>This is a test for a JavaScript graphical filter editor, created by me
-(Carlos Rafael Gimenes das Neves - <a href="http://twitter.com/carlosrafaelgn">@carlosrafaelgn</a>, <code id="shdg3724"></code>), based on my old C++ graphic equalizer.</p>
-<p>Check out the <a href="https://github.com/carlosrafaelgn/GraphicalFilterEditor">source</a> for more information! This test uses <a href="http://www.w3.org/TR/webaudio/">Web Audio API</a>, <a href="http://www.w3.org/TR/FileAPI/">File API</a> and <a href="http://www.w3.org/TR/workers/">Web Worker API</a> and requires a <a href="http://caniuse.com/audio-api">compliant browser</a> to run properly. In <a href="https://wiki.mozilla.org/WebAudio_API_Rollout_Status">Firefox 23 and 24</a>, Web Audio API must be enabled using <code>about:config</code>.</p>
+<p>This is a test for a JavaScript graphical filter editor, originally created by
+Carlos Rafael Gimenes das Neves (<a href="http://twitter.com/carlosrafaelgn">@carlosrafaelgn</a>, <code id="shdg3724"></code>), based on his old C++ graphic equalizer.</p>
+<p>This has been further enhanced by Armando Meziat (<a href="https://github.com/odnamrataizem">@odnamrataizem</a>) with a few important differences:</p>
+<ul>
+	<li>Analyser files have been moved to the demo;</li>
+	<li>Everything but the demo has been ported to TypeScript;</li>
+	<li>Styles ported to SASS;</li>
+	<li>Responsive UI (including DPI awareness);</li>
+	<li>Refactored mouse and touch event handling to use Pointer Events when available;</li>
+	<li>Built using Webpack;</li>
+	<li>Code linting;</li>
+	<li>Localization and internationalization;</li>
+	<li>RTL support;</li>
+	<li>Can be installed via NPM or Yarn.</li>
+</ul>
+<p>Check out the <a href="https://github.com/kantoradio/canvas-equalizer">source</a> for more information! This test uses <a href="http://www.w3.org/TR/webaudio/">Web Audio API</a>, <a href="http://www.w3.org/TR/FileAPI/">File API</a> and <a href="http://www.w3.org/TR/workers/">Web Worker API</a> and requires a <a href="http://caniuse.com/audio-api">compliant browser</a> to run properly. In <a href="https://wiki.mozilla.org/WebAudio_API_Rollout_Status">Firefox 23 and 24</a>, Web Audio API must be enabled using <code>about:config</code>.</p>
 <p>Please, load files with a sample rate of 44100Hz or 48000Hz (the filter itself supports any sample rate, this is just due to AudioContext).</p>
 <p>Check out the functions <code>main()</code> and <code>updateConnections()</code> to see how to have stereo output using two analyzers!</p>
 <p>If running this locally in Chrome, it must be started with the command-line option <code>--allow-file-access-from-files</code> otherwise you will not be able to load any files!</p>
