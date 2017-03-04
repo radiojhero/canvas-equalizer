@@ -1,0 +1,170 @@
+// canvas-equalizer is distributed under the FreeBSD License
+//
+// Copyright (c) 2012-2017 Armando Meziat, Carlos Rafael Gimenes das Neves
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice, this
+//    list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+// ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+// The views and conclusions contained in the software and documentation are those
+// of the authors and should not be interpreted as representing official policies,
+// either expressed or implied, of the FreeBSD Project.
+//
+// https://github.com/kantoradio/canvas-equalizer
+
+$canvas-equalizer-namespace: 'GE' !default;
+
+$status-bar-fg: #fff !default;
+$status-bar-bg: #1c1c1c !default;
+
+$menu-fg: #fff !default;
+$menu-bg: #1c1c1c !default;
+$menu-label-fg: #0f2 !default;
+
+$hover-fg: #1c1c1c !default;
+$hover-bg: #fff !default;
+
+@mixin reset-button {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+.#{$canvas-equalizer-namespace} {
+    cursor: default;
+    display: inline-block;
+    font: status-bar;
+    font-feature-settings: 'tnum' 1;
+    font-size: 12px;
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+    position: relative;
+    vertical-align: top;
+
+    &IOS {
+        font-family: '-apple-system', 'HelveticaNeue', sans-serif;
+    }
+
+    & &STB {
+        background: $status-bar-bg;
+        bottom: 0;
+        color: $status-bar-fg;
+        left: 0;
+        padding-right: calc(1.5em + 8px);
+        position: absolute;
+        right: 0;
+    }
+
+    &.RTL &STB {
+        padding-left: calc(1.5em + 8px);
+        padding-right: 0;
+    }
+
+    & &CNV {
+        cursor: crosshair;
+        display: block;
+        margin: 0;
+        touch-action: none;
+
+        &ZON {
+            cursor: ns-resize;
+        }
+    }
+
+    & &LBL {
+        display: inline-block;
+        line-height: 16px;
+        padding: 4px;
+
+        &CSR,
+        &CRV {
+            width: 9em;
+        }
+    }
+
+    & &BTN {
+        @include reset-button;
+        border-left: solid 1px;
+        box-sizing: content-box;
+        display: inline-block;
+        line-height: 16px;
+        padding: 4px;
+        position: absolute;
+        right: 0;
+        text-align: center;
+        width: 1.5em;
+    }
+
+    &.RTL &BTN {
+        border-left: 0;
+        border-right: solid 1px;
+        left: 0;
+        right: auto;
+    }
+
+    & &MNU {
+        background: $menu-bg;
+        bottom: 24px;
+        color: $menu-fg;
+        padding: 2px;
+        position: absolute;
+        right: 0;
+
+        &IT {
+            @include reset-button;
+            display: block;
+            margin: 2px;
+            padding: 2px;
+            text-align: left;
+            width: calc(100% - 4px);
+        }
+
+        &SEP {
+            border-top: solid 1px;
+            height: 1px;
+            margin: 4px;
+        }
+
+        &LBL {
+            color: $menu-label-fg;
+            font-size: 14px;
+            margin: 4px;
+        }
+    }
+
+    &.RTL &MNU {
+        left: 0;
+        right: auto;
+    }
+
+    & &CLK {
+        cursor: pointer;
+
+        &:focus {
+            background: $hover-bg;
+            color: $hover-fg;
+            outline: none;
+        }
+    }
+}

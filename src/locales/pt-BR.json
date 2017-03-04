@@ -1,0 +1,22 @@
+{
+  "cursor.label": "Cursor: <span></span> dB",
+  "curve.label": "Curva: <span></span> dB",
+
+  "frequency.label": "Frequência: <span></span>",
+  "frequency.text": "{0} ({1})",
+  "frequency.format": "{0} {1}",
+  "frequency.unit.Hz": "Hz",
+  "frequency.unit.kHz": "kHz",
+
+  "menu": "Opções",
+  "menu.both": "Mesma curva para os dois canais",
+  "menu.both.left": "Usar curva esquerda",
+  "menu.both.right": "Usar curva direita",
+  "menu.one": "Uma curva para cada canal",
+  "menu.one.left": "Mostrar curva esquerda",
+  "menu.one.right": "Mostrar curva direita",
+  "menu.zones": "Mostrar zonas",
+  "menu.zoneEdit": "Editar por zonas",
+  "menu.normalizeCurves": "Normalizar curvas",
+  "menu.actualResponse": "Mostrar resposta real"
+}

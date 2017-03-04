@@ -1,0 +1,22 @@
+{
+  "cursor.label": "Cursor: <span></span> dB",
+  "curve.label": "Curve: <span></span> dB",
+
+  "frequency.label": "Frequency: <span></span>",
+  "frequency.text": "{0} ({1})",
+  "frequency.format": "{0} {1}",
+  "frequency.unit.Hz": "Hz",
+  "frequency.unit.kHz": "kHz",
+
+  "menu": "Options",
+  "menu.both": "Same curve for both channels",
+  "menu.both.left": "Use left curve",
+  "menu.both.right": "Use right curve",
+  "menu.one": "One curve for each channel",
+  "menu.one.left": "Show left curve",
+  "menu.one.right": "Show right curve",
+  "menu.zones": "Show zones",
+  "menu.zoneEdit": "Edit by zones",
+  "menu.normalizeCurves": "Normalize curves",
+  "menu.actualResponse": "Show actual response"
+}
