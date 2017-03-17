@@ -45,15 +45,28 @@ import CanvasEqualizer from 'canvas-equalizer'; // ES6, TypeScript
 var CanvasEqualizer = require('canvas-equalizer'); // CommonJS
 ```
 
-Or, if you've installed it via Bower (will add `CanvasEqualizer` to the
-global scope):
-
-```html
-<script src="bower_components/canvas-equalizer/dist/CanvasEqualizer.js"></script>
-```
-
 Last, but not least: the `CanvasEqualizer.css` stylesheet includes styles for
 the UI, including its "status bar".
+
+### Bower ###
+
+If you're using Bower instead, you'll need [`bower-npm-resolver`][1]. Follow the
+instructions therein, then:
+
+[1]: https://github.com/mjeanroy/bower-npm-resolver
+
+```bash
+$ bower install --save npm:canvas-equalizer
+```
+
+(the `npm:` bit is important!)
+
+Next, include the files, which will add `CanvasEqualizer` to the global scope:
+
+```html
+<link rel="stylesheet" href="bower_components/canvas-equalizer/dist/css/CanvasEqualizer.min.css">
+<script src="bower_components/canvas-equalizer/dist/js/CanvasEqualizer.min.js"></script>
+```
 
 
 Usage
@@ -118,22 +131,22 @@ equalizer.visibleFrequencies; // read-only
 ```
 
 The code in the `demo` folder can be used as a demo on how to load and generate
-files during runtime (using the [File API][1] and the [Web Worker API][2]) in
+files during runtime (using the [File API][2] and the [Web Worker API][3]) in
 client-side JavaScript.
 
 
 Compatibility
 -------------
 
-This project uses the [Web Audio API][3] and requires a [compliant browser][4]
-to run properly. In [Firefox 23 and 24][5], Web Audio API must be enabled
+This project uses the [Web Audio API][4] and requires a [compliant browser][5]
+to run properly. In [Firefox 23 and 24][6], Web Audio API must be enabled
 using `about:config`.
 
-[1]: http://www.w3.org/TR/FileAPI/
-[2]: http://www.w3.org/TR/workers/
-[3]: http://www.w3.org/TR/webaudio/
-[4]: http://caniuse.com/audio-api
-[5]: https://wiki.mozilla.org/WebAudio_API_Rollout_Status
+[2]: http://www.w3.org/TR/FileAPI/
+[3]: http://www.w3.org/TR/workers/
+[4]: http://www.w3.org/TR/webaudio/
+[5]: http://caniuse.com/audio-api
+[6]: https://wiki.mozilla.org/WebAudio_API_Rollout_Status
 
 If running the demo locally, Chrome must be started with the command-line
 option `--allow-file-access-from-files`, otherwise you will not be able to load
