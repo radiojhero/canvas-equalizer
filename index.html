@@ -49,7 +49,7 @@
 	<script type="text/javascript">
 		//<![CDATA[
 		"use strict";
-		var audioContext, source, sourceAudio, graphicEqualizer, splitter, analyzer, analyzerType, merger, pendingUrls, chkSource;
+		var audioContext, source, sourceAudio, graphicEqualizer, splitter, analyzer, analyzerType, merger, pendingUrls, chkSource, ignoreNextConvolverChange = false;
 		function $(e) {
 			return document.getElementById(e);
 		}
