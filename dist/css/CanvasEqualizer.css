@@ -1,133 +1,99 @@
-/*! canvas-equalizer ~ License: BSD-2-Clause-FreeBSD ~ https://radiojhero.github.io/canvas-equalizer/ */
-/*! canvas-equalizer ~ License: BSD-2-Clause-FreeBSD ~ https://radiojhero.github.io/canvas-equalizer/ */
-.GE {
+.index_GE__s5rqT {
   cursor: default;
   display: inline-block;
   font: status-bar;
-  -webkit-font-feature-settings: 'tnum' 1;
-          font-feature-settings: 'tnum' 1;
+  -moz-font-feature-settings: 'tnum' 1;
+       font-feature-settings: 'tnum' 1;
   font-size: 12px;
   font-style: normal;
   font-variant-numeric: tabular-nums;
   font-weight: 400;
   position: relative;
-  vertical-align: top;
-}
-
-.GEIOS {
-  font-family: '-apple-system', 'HelveticaNeue', sans-serif;
-}
-
-.GE .GESTB {
-  background: #1c1c1c;
-  bottom: 0;
-  color: #fff;
-  left: 0;
-  padding-right: calc(1.5em + 8px);
-  position: absolute;
-  right: 0;
-}
-
-.GE.RTL .GESTB {
-  padding-left: calc(1.5em + 8px);
-  padding-right: 0;
-}
-
-.GE .GECNV {
-  cursor: crosshair;
-  display: block;
-  margin: 0;
-  -ms-touch-action: none;
-      touch-action: none;
-}
-
-.GE .GECNVZON {
-  cursor: ns-resize;
-}
-
-.GE .GELBL {
-  display: inline-block;
-  line-height: 16px;
-  padding: 4px;
-}
-
-.GE .GELBLCSR, .GE .GELBLCRV {
-  width: 9em;
-}
-
-.GE .GEBTN {
-  background: transparent;
-  border: 0;
-  color: inherit;
-  font: inherit;
-  margin: 0;
-  padding: 0;
-  border-left: solid 1px;
-  box-sizing: content-box;
-  display: inline-block;
-  line-height: 16px;
-  padding: 4px;
-  position: absolute;
-  right: 0;
-  text-align: center;
-  width: 1.5em;
-}
-
-.GE.RTL .GEBTN {
-  border-left: 0;
-  border-right: solid 1px;
-  left: 0;
-  right: auto;
-}
-
-.GE .GEMNU {
-  background: #1c1c1c;
-  bottom: 24px;
-  color: #fff;
-  padding: 2px;
-  position: absolute;
-  right: 0;
-}
-
-.GE .GEMNUIT {
-  background: transparent;
-  border: 0;
-  color: inherit;
-  font: inherit;
-  margin: 0;
-  padding: 0;
-  display: block;
-  margin: 2px;
-  padding: 2px;
-  text-align: left;
-  width: calc(100% - 4px);
-}
-
-.GE .GEMNUSEP {
-  border-top: solid 1px;
-  height: 1px;
-  margin: 4px;
-}
-
-.GE .GEMNULBL {
-  color: #0f2;
-  font-size: 14px;
-  margin: 4px;
-}
-
-.GE.RTL .GEMNU {
-  left: 0;
-  right: auto;
-}
-
-.GE .GECLK {
-  cursor: pointer;
-}
-
-.GE .GECLK:focus {
-  background: #fff;
-  color: #1c1c1c;
-  outline: none;
-}
-
-/*# sourceMappingURL=CanvasEqualizer.css.map*/
+  vertical-align: top; }
+  .index_GEIOS__izM8j {
+    font-family: '-apple-system', 'HelveticaNeue', sans-serif; }
+  .index_GE__s5rqT .index_GESTB__XArCB {
+    background: #1c1c1c;
+    bottom: 0;
+    color: #fff;
+    left: 0;
+    padding-right: -webkit-calc(1.5em + 8px);
+    padding-right: calc(1.5em + 8px);
+    position: absolute;
+    right: 0; }
+  .index_GE__s5rqT.index_RTL__WHIjt .index_GESTB__XArCB {
+    padding-left: -webkit-calc(1.5em + 8px);
+    padding-left: calc(1.5em + 8px);
+    padding-right: 0; }
+  .index_GE__s5rqT .index_GECNV__fVDti {
+    cursor: crosshair;
+    display: block;
+    margin: 0;
+    touch-action: none; }
+    .index_GE__s5rqT .index_GECNVZON__mwSAQ {
+      cursor: ns-resize; }
+  .index_GE__s5rqT .index_GELBL__3JPSb {
+    display: inline-block;
+    line-height: 16px;
+    padding: 4px; }
+    .index_GE__s5rqT .index_GELBLCSR__CxpGb, .index_GE__s5rqT .index_GELBLCRV__3u9va {
+      width: 9em; }
+  .index_GE__s5rqT .index_GEBTN__ck1Ni {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    margin: 0;
+    padding: 0;
+    border-left: solid 1px;
+    -moz-box-sizing: content-box;
+         box-sizing: content-box;
+    display: inline-block;
+    line-height: 16px;
+    padding: 4px;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    width: 1.5em; }
+  .index_GE__s5rqT.index_RTL__WHIjt .index_GEBTN__ck1Ni {
+    border-left: 0;
+    border-right: solid 1px;
+    left: 0;
+    right: auto; }
+  .index_GE__s5rqT .index_GEMNU__1iCnK {
+    background: #1c1c1c;
+    bottom: 24px;
+    color: #fff;
+    padding: 2px;
+    position: absolute;
+    right: 0; }
+    .index_GE__s5rqT .index_GEMNUIT__1BSoR {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      margin: 0;
+      padding: 0;
+      display: block;
+      margin: 2px;
+      padding: 2px;
+      text-align: left;
+      width: -webkit-calc(100% - 4px);
+      width: calc(100% - 4px); }
+    .index_GE__s5rqT .index_GEMNUSEP__2BkeP {
+      border-top: solid 1px;
+      height: 1px;
+      margin: 4px; }
+    .index_GE__s5rqT .index_GEMNULBL__5A6OI {
+      color: #0f2;
+      font-size: 14px;
+      margin: 4px; }
+  .index_GE__s5rqT.index_RTL__WHIjt .index_GEMNU__1iCnK {
+    left: 0;
+    right: auto; }
+  .index_GE__s5rqT .index_GECLK__1V_Gq {
+    cursor: pointer; }
+    .index_GE__s5rqT .index_GECLK__1V_Gq:focus {
+      background: #fff;
+      color: #1c1c1c;
+      outline: none; }
