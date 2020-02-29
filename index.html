@@ -39,9 +39,9 @@
 			display: none;
 		}
 	</style>
-	<link rel="stylesheet" href="dist/css/CanvasEqualizer.css" />
+	<link rel="stylesheet" href="dist/css/CanvasEqualizer.min.css" />
 	<script type="text/javascript" charset="utf-8" src="FFTNR.js"></script>
-	<script type="text/javascript" charset="utf-8" src="dist/js/CanvasEqualizer.js"></script>
+	<script type="text/javascript" charset="utf-8" src="dist/js/CanvasEqualizer.umd.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="Analyzer.js"></script>
 	<script type="text/javascript" charset="utf-8" src="AnalyzerWL.js"></script>
 	<script type="text/javascript" charset="utf-8" src="Program.js"></script>
@@ -494,13 +494,13 @@ Carlos Rafael Gimenes das Neves (<a href="http://twitter.com/carlosrafaelgn">@ca
 	<li>Styles ported to SASS;</li>
 	<li>Responsive UI (including DPI awareness);</li>
 	<li>Refactored mouse and touch event handling to use Pointer Events when available;</li>
-	<li>Built using Webpack;</li>
+	<li>Built using Rollup;</li>
 	<li>Code linting;</li>
 	<li>Localization and internationalization;</li>
 	<li>RTL support;</li>
 	<li>Can be installed via NPM or Yarn.</li>
 </ul>
-<p>Check out the <a href="https://github.com/kantoradio/canvas-equalizer">source</a> for more information! This test uses <a href="http://www.w3.org/TR/webaudio/">Web Audio API</a>, <a href="http://www.w3.org/TR/FileAPI/">File API</a> and <a href="http://www.w3.org/TR/workers/">Web Worker API</a> and requires a <a href="http://caniuse.com/audio-api">compliant browser</a> to run properly. In <a href="https://wiki.mozilla.org/WebAudio_API_Rollout_Status">Firefox 23 and 24</a>, Web Audio API must be enabled using <code>about:config</code>.</p>
+<p>Check out the <a href="https://github.com/radiojhero/canvas-equalizer">source</a> for more information! This test uses <a href="http://www.w3.org/TR/webaudio/">Web Audio API</a>, <a href="http://www.w3.org/TR/FileAPI/">File API</a> and <a href="http://www.w3.org/TR/workers/">Web Worker API</a> and requires a <a href="http://caniuse.com/audio-api">compliant browser</a> to run properly. In <a href="https://wiki.mozilla.org/WebAudio_API_Rollout_Status">Firefox 23 and 24</a>, Web Audio API must be enabled using <code>about:config</code>.</p>
 <p>Please, load files with a sample rate of 44100Hz or 48000Hz (the filter itself supports any sample rate, this is just due to AudioContext).</p>
 <p>Check out the functions <code>main()</code> and <code>updateConnections()</code> to see how to have stereo output using two analyzers!</p>
 <p>If running this locally in Chrome, it must be started with the command-line option <code>--allow-file-access-from-files</code> otherwise you will not be able to load any files!</p>
