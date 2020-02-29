@@ -4,7 +4,8 @@
   "description": "A JavaScript + HTML5 Canvas + Web Audio API sound equalizer.",
   "license": "BSD-2-Clause-FreeBSD",
   "repository": "https://github.com/radiojhero/canvas-equalizer.git",
-  "author": [
+  "author": "Carlos Rafael Gimenes das Neves <carlos.rafael@bandtec.com.br> (http://carlosrafaelgn.com.br/)",
+  "contributors": [
     "Armando Meziat <amf-commits@mezi.at> (https://armando.mezi.at/)",
     "Carlos Rafael Gimenes das Neves <carlos.rafael@bandtec.com.br> (http://carlosrafaelgn.com.br/)"
   ],
