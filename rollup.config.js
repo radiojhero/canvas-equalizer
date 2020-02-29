@@ -17,7 +17,6 @@ export default [
         },
         plugins: [
             postcss({
-                modules: true,
                 extract: true,
             }),
         ],
@@ -31,7 +30,6 @@ export default [
         },
         plugins: [
             postcss({
-                modules: true,
                 extract: true,
                 minimize: true,
             }),
