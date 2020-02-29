@@ -212,7 +212,7 @@
 			var t = $("cbAnalyzer").value;
 			if (!source || ignoreNextConvolverChange) return false;
 			source.disconnect(0);
-			source.connect(graphicEqualizer.filter.convolver, 0, 0);
+			source.connect(graphicEqualizer.convolver, 0, 0);
 			graphicEqualizer.convolver.disconnect(0);
 			switch (t) {
 				case "soundParticles":
