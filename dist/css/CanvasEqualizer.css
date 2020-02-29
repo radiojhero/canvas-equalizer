@@ -1,4 +1,4 @@
-.index_GE__s5rqT {
+.GE {
   cursor: default;
   display: inline-block;
   font: status-bar;
@@ -10,9 +10,9 @@
   font-weight: 400;
   position: relative;
   vertical-align: top; }
-  .index_GEIOS__izM8j {
+  .GEIOS {
     font-family: '-apple-system', 'HelveticaNeue', sans-serif; }
-  .index_GE__s5rqT .index_GESTB__XArCB {
+  .GE .GESTB {
     background: #1c1c1c;
     bottom: 0;
     color: #fff;
@@ -21,24 +21,24 @@
     padding-right: calc(1.5em + 8px);
     position: absolute;
     right: 0; }
-  .index_GE__s5rqT.index_RTL__WHIjt .index_GESTB__XArCB {
+  .GE.RTL .GESTB {
     padding-left: -webkit-calc(1.5em + 8px);
     padding-left: calc(1.5em + 8px);
     padding-right: 0; }
-  .index_GE__s5rqT .index_GECNV__fVDti {
+  .GE .GECNV {
     cursor: crosshair;
     display: block;
     margin: 0;
     touch-action: none; }
-    .index_GE__s5rqT .index_GECNVZON__mwSAQ {
+    .GE .GECNVZON {
       cursor: ns-resize; }
-  .index_GE__s5rqT .index_GELBL__3JPSb {
+  .GE .GELBL {
     display: inline-block;
     line-height: 16px;
     padding: 4px; }
-    .index_GE__s5rqT .index_GELBLCSR__CxpGb, .index_GE__s5rqT .index_GELBLCRV__3u9va {
+    .GE .GELBLCSR, .GE .GELBLCRV {
       width: 9em; }
-  .index_GE__s5rqT .index_GEBTN__ck1Ni {
+  .GE .GEBTN {
     background: transparent;
     border: 0;
     color: inherit;
@@ -55,19 +55,19 @@
     right: 0;
     text-align: center;
     width: 1.5em; }
-  .index_GE__s5rqT.index_RTL__WHIjt .index_GEBTN__ck1Ni {
+  .GE.RTL .GEBTN {
     border-left: 0;
     border-right: solid 1px;
     left: 0;
     right: auto; }
-  .index_GE__s5rqT .index_GEMNU__1iCnK {
+  .GE .GEMNU {
     background: #1c1c1c;
     bottom: 24px;
     color: #fff;
     padding: 2px;
     position: absolute;
     right: 0; }
-    .index_GE__s5rqT .index_GEMNUIT__1BSoR {
+    .GE .GEMNUIT {
       background: transparent;
       border: 0;
       color: inherit;
@@ -80,20 +80,20 @@
       text-align: left;
       width: -webkit-calc(100% - 4px);
       width: calc(100% - 4px); }
-    .index_GE__s5rqT .index_GEMNUSEP__2BkeP {
+    .GE .GEMNUSEP {
       border-top: solid 1px;
       height: 1px;
       margin: 4px; }
-    .index_GE__s5rqT .index_GEMNULBL__5A6OI {
+    .GE .GEMNULBL {
       color: #0f2;
       font-size: 14px;
       margin: 4px; }
-  .index_GE__s5rqT.index_RTL__WHIjt .index_GEMNU__1iCnK {
+  .GE.RTL .GEMNU {
     left: 0;
     right: auto; }
-  .index_GE__s5rqT .index_GECLK__1V_Gq {
+  .GE .GECLK {
     cursor: pointer; }
-    .index_GE__s5rqT .index_GECLK__1V_Gq:focus {
+    .GE .GECLK:focus {
       background: #fff;
       color: #1c1c1c;
       outline: none; }
