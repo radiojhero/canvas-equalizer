@@ -31,7 +31,7 @@
  * https://github.com/radiojhero/canvas-equalizer
  */
 
-import IEqualizerOptions from './ICanvasEqualizerOptions';
+import IEqualizerOptions from './IEqualizerOptions';
 
 interface ICanvasEqualizerOptions {
     updateFilterOnDrag?: boolean;
