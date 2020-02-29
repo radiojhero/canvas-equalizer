@@ -99,11 +99,11 @@ function unwrap(func: any, tag: string, elem: EventTarget): any {
 if ((window as any).PointerEvent) {
     attachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
                               targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        observable.addEventListener(`pointer${eventName}`, targetFunction, capturePhase);
+        observable.addEventListener(`pointer${eventName}`, targetFunction as EventListener, capturePhase);
     };
     detachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
                               targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        observable.removeEventListener(`pointer${eventName}`, targetFunction, capturePhase);
+        observable.removeEventListener(`pointer${eventName}`, targetFunction as EventListener, capturePhase);
     };
 }
 else if ('ontouchend' in document) {
@@ -154,11 +154,11 @@ else if ('ontouchend' in document) {
 else {
     attachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
                               targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        observable.addEventListener(`mouse${eventName}`, targetFunction, capturePhase);
+        observable.addEventListener(`mouse${eventName}`, targetFunction as EventListener, capturePhase);
     };
     detachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
                               targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        observable.removeEventListener(`mouse${eventName}`, targetFunction, capturePhase);
+        observable.removeEventListener(`mouse${eventName}`, targetFunction as EventListener, capturePhase);
     };
 }
 

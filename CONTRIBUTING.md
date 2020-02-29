@@ -31,7 +31,6 @@ Opening issues
     participate on it.
 -   When reporting a bug, be sure to provide a reduced test case.
 -   Be respectful!
--   Check `contributing.json` for details on how issues should be formatted.
 
 [1]: https://github.com/radiojhero/canvas-equalizer/issues
 
@@ -47,7 +46,6 @@ Submitting pull requests
     the code adheres to our standards.
 -   Remember you can still push more commits to your branch when needed after
     submitting your PR; you'll probably want to do this based on feedback.
--   Again, `contributing.json` has details on formatting PRs and commits.
 
 
 Known issues / TODOs / Help wanted
@@ -62,8 +60,4 @@ Known issues / TODOs / Help wanted
     a really short period of time, but enough to be perceptible in some systems
     and therefore to have me debounce `updateFilterOnDrag` to atenuate this;
 -   There's no accessibility at all but for the bottom-right menu;
--   If the repository is in an NFS folder or a VM, chances are Webpack won't be
-    able to properly watch file changes when running `npm start`; as such, pass
-    `--env.poll` to the command so Webpack is instructed to manually poll file
-    changes (e.g. `npm start -- --env.poll=1000`).
 -   Needs test suites! What a shame... orz

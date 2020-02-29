@@ -35,7 +35,7 @@
 
 import deepAssign from 'deep-assign';
 import { FFTReal } from './FFTNR';
-import IEqualizerOptions, { ConvolverCallback } from './IEqualizerOptions';
+import IEqualizerOptions from './IEqualizerOptions';
 
 const defaultOptions: IEqualizerOptions = {
     validYRangeHeight: 255,
@@ -49,15 +49,15 @@ export default class Equalizer {
     private _equivalentZones: Uint16Array;
     private _equivalentZonesFrequencyCount: Float32Array;
     private _zeroChannelValueY: number;
-    private _maximumChannelValue: number;
-    private _minimumChannelValue: number;
-    private _minusInfiniteChannelValue: number;
+    public _maximumChannelValue: number;
+    public _minimumChannelValue: number;
+    public _minusInfiniteChannelValue: number;
     private _maximumChannelValueY: number;
     private _minimumChannelValueY: number;
     private _filterLength: number;
     private _sampleRate: number;
     private _isNormalized: boolean;
-    private _binCount: number;
+    public _binCount: number;
     private _audioContext: AudioContext;
     private _filterKernel: AudioBuffer;
     private _convolver: ConvolverNode;
@@ -560,7 +560,9 @@ export default class Equalizer {
             this._convolver = newAudioContext.createConvolver();
             this._convolver.normalize = false;
             this._convolver.buffer = this._filterKernel;
-            this._options.convolverCallback?.(oldConvolver, this._convolver);
+            if (this._options.convolverCallback) {
+                this._options.convolverCallback(oldConvolver, this._convolver);
+            }
         }
     }
 

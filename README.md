@@ -8,7 +8,7 @@ canvas-equalizer
 This package allows you to graphically edit an equalizer filter and apply it to
 songs in real time. You can also apply the filter to an entire song and
 download a WAVE file with the filtered song. Check out the live sample on the
-project's website: https://opensource.kantorad.io/canvas-equalizer/
+project's website: https://radiojhero.github.io/canvas-equalizer/
 
 This is a fork of Carlos Rafael Gimenes das Neves's port of his own old C++
 graphic equalizer to Web technologies, with a few important differences:
@@ -20,7 +20,7 @@ graphic equalizer to Web technologies, with a few important differences:
 -   Refactored mouse and touch event handling to use Pointer Events
     when available;
 -   Responsive UI (including DPI awareness);
--   Built using Webpack;
+-   Built using Rollup;
 -   Code linting;
 -   Localization and internationalization;
 -   RTL support;

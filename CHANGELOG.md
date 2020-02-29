@@ -25,7 +25,9 @@ Nothing relevant yet.
 [Unreleased]
 ------------
 
-Nothing relevant yet.
+### Changed ###
+-   Switched Webpack for Rollup;
+-   Updated convolver behavior to match spec.
 
 
 0.2.0 - 2017-03-12

@@ -31,6 +31,5 @@
  * https://github.com/radiojhero/canvas-equalizer
  */
 
-// this is needed as per https://gist.github.com/iamakulov/966b91c0fc6363a16ff0650b51fb991b
-// tslint:disable-next-line:no-require-imports
-module.exports = require('./CanvasEqualizer').default;
+import CanvasEqualizer from './CanvasEqualizer';
+export default CanvasEqualizer;

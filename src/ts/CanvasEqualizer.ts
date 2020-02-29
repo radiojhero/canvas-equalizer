@@ -113,7 +113,7 @@ export default class CanvasEqualizer {
                 return l;
             };
             const createMenuItem = (text: string, checkable: boolean | string, checked: boolean,
-                                    clickHandler: (e?: MouseEvent) => any) => {
+                                    clickHandler: (e: MouseEvent) => any) => {
                 const i = document.createElement('button');
                 i.type = 'button';
                 i.className = `${clsNS}MNUIT ${clsNS}CLK`;
