@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "A JavaScript + HTML5 Canvas + Web Audio API sound equalizer.",
   "license": "BSD-2-Clause-FreeBSD",
-  "repository": "https://github.com/kantoradio/canvas-equalizer.git",
+  "repository": "https://github.com/radiojhero/canvas-equalizer.git",
   "author": [
     "Armando Meziat <amf-commits@mezi.at> (https://armando.mezi.at/)",
     "Carlos Rafael Gimenes das Neves <carlos.rafael@bandtec.com.br> (http://carlosrafaelgn.com.br/)"

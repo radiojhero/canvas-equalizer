@@ -33,7 +33,7 @@ Opening issues
 -   Be respectful!
 -   Check `contributing.json` for details on how issues should be formatted.
 
-[1]: https://github.com/kantoradio/canvas-equalizer/issues
+[1]: https://github.com/radiojhero/canvas-equalizer/issues
 
 
 Submitting pull requests

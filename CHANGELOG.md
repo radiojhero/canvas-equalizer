@@ -50,6 +50,6 @@ This is a fork of Carlos Rafael Gimenes das Neves's [GraphicalFilterEditor].
     when available.
 
 
-[Unreleased]: https://github.com/kantoradio/canvas-equalizer/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/radiojhero/canvas-equalizer/compare/v0.2.0...HEAD
 
 [GraphicalFilterEditor]: https://github.com/carlosrafaelgn/GraphicalFilterEditor

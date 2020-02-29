@@ -28,12 +28,13 @@
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the FreeBSD Project.
  *
- * https://github.com/kantoradio/canvas-equalizer
+ * https://github.com/radiojhero/canvas-equalizer
  */
 
-interface IEqualizerOptions {
+export type ConvolverCallback = (oldConvolver: ConvolverNode, newConvolver: ConvolverNode) => void;
+
+export default interface IEqualizerOptions {
     visibleBinCount?: number;
     validYRangeHeight?: number;
+    convolverCallback?: ConvolverCallback;
 }
-
-export default IEqualizerOptions;

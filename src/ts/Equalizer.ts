@@ -28,14 +28,14 @@
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the FreeBSD Project.
  *
- * https://github.com/kantoradio/canvas-equalizer
+ * https://github.com/radiojhero/canvas-equalizer
  */
 
 /* tslint:disable:no-magic-numbers no-bitwise */
 
 import deepAssign from 'deep-assign';
 import { FFTReal } from './FFTNR';
-import IEqualizerOptions from './IEqualizerOptions';
+import IEqualizerOptions, { ConvolverCallback } from './IEqualizerOptions';
 
 const defaultOptions: IEqualizerOptions = {
     validYRangeHeight: 255,
@@ -76,9 +76,6 @@ export default class Equalizer {
         this._binCount = (filterLength >>> 1) + 1;
         this._audioContext = audioContext;
         this._filterKernel = audioContext.createBuffer(2, filterLength, this._sampleRate);
-        this._convolver = audioContext.createConvolver();
-        this._convolver.normalize = false;
-        this._convolver.buffer = this._filterKernel;
         this._tmp = new Float32Array(filterLength);
         this._channelCurves = [
             new Int16Array(this._options.visibleBinCount!), new Int16Array(this._options.visibleBinCount!)];
@@ -121,6 +118,9 @@ export default class Equalizer {
         }
 
         this.reset();
+        this._convolver = audioContext.createConvolver();
+        this._convolver.normalize = false;
+        this._convolver.buffer = this._filterKernel;
     }
 
     public reset() {
@@ -237,6 +237,18 @@ export default class Equalizer {
         }
     }
 
+    private _updateBuffer() {
+        if (this._options.convolverCallback) {
+            const oldConvolver = this._convolver;
+            this._convolver = this.audioContext.createConvolver();
+            this._convolver.normalize = false;
+            this._convolver.buffer = this._filterKernel;
+            this._options.convolverCallback(oldConvolver, this._convolver);
+        } else {
+            this._convolver.buffer = this._filterKernel;
+        }
+    }
+
     public copyFilter(sourceChannel: number, destinationChannel: number) {
         const src = this._filterKernel.getChannelData(sourceChannel);
         const dst = this._filterKernel.getChannelData(destinationChannel);
@@ -245,7 +257,9 @@ export default class Equalizer {
             dst[i] = src[i];
         }
 
-        this._convolver.buffer = this._filterKernel;
+        if (this._convolver) {
+            this._updateBuffer();
+        }
     }
 
     public updateFilter(updateBothChannels: boolean) {
@@ -375,7 +389,9 @@ export default class Equalizer {
             return;
         }
 
-        this._convolver.buffer = this._filterKernel;
+        if (this._convolver) {
+            this._updateBuffer();
+        }
     }
 
     public updateActualChannelCurve(channelIndex: number) {
@@ -535,13 +551,16 @@ export default class Equalizer {
 
     set audioContext(newAudioContext: AudioContext) {
         if (this.audioContext !== newAudioContext) {
+            const oldConvolver = this._convolver;
             this._convolver.disconnect(0);
             this._audioContext = newAudioContext;
             this._filterKernel = newAudioContext.createBuffer(2, this._filterLength, this._sampleRate);
+            (this._convolver as any) = null;
+            this.updateFilter(true);
             this._convolver = newAudioContext.createConvolver();
             this._convolver.normalize = false;
             this._convolver.buffer = this._filterKernel;
-            this.updateFilter(true);
+            this._options.convolverCallback?.(oldConvolver, this._convolver);
         }
     }
 

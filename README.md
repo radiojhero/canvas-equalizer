@@ -1,9 +1,9 @@
 canvas-equalizer
 ================
 
-[![Version](http://badge.fury.io/gh/kantoradio%2Fcanvas-equalizer.svg)](http://badge.fury.io/gh/kantoradio%2Fcanvas-equalizer)
-[![Dependencies status](https://david-dm.org/kantoradio/canvas-equalizer.svg)](https://david-dm.org/kantoradio/canvas-equalizer)
-[![Dev dependencies status](https://david-dm.org/kantoradio/canvas-equalizer/dev-status.svg)](https://david-dm.org/kantoradio/canvas-equalizer?type=dev)
+[![Version](http://badge.fury.io/gh/radiojhero%2Fcanvas-equalizer.svg)](http://badge.fury.io/gh/radiojhero%2Fcanvas-equalizer)
+[![Dependencies status](https://david-dm.org/radiojhero/canvas-equalizer.svg)](https://david-dm.org/radiojhero/canvas-equalizer)
+[![Dev dependencies status](https://david-dm.org/radiojhero/canvas-equalizer/dev-status.svg)](https://david-dm.org/radiojhero/canvas-equalizer?type=dev)
 
 This package allows you to graphically edit an equalizer filter and apply it to
 songs in real time. You can also apply the filter to an entire song and

@@ -28,7 +28,7 @@
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the FreeBSD Project.
  *
- * https://github.com/kantoradio/canvas-equalizer
+ * https://github.com/radiojhero/canvas-equalizer
  */
 
 // this is needed as per https://gist.github.com/iamakulov/966b91c0fc6363a16ff0650b51fb991b
