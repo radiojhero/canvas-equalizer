@@ -47,7 +47,7 @@ export default [
         },
         plugins: [
             resolve({
-                extensions: ['.ts'],
+                extensions: ['.js', '.ts'],
             }),
             commonjs(),
             json(),
@@ -67,7 +67,7 @@ export default [
         },
         plugins: [
             resolve({
-                extensions: ['.ts'],
+                extensions: ['.js', '.ts'],
             }),
             commonjs(),
             json(),
