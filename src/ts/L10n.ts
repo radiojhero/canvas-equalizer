@@ -1,7 +1,7 @@
 /**
  * canvas-equalizer is distributed under the FreeBSD License
  *
- * Copyright (c) 2012-2017 Armando Meziat, Carlos Rafael Gimenes das Neves
+ * Copyright (c) 2012-2020 Armando Meziat, Carlos Rafael Gimenes das Neves
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,30 +33,27 @@
 
 import defaultLocale from '../locales/en.json';
 
-import ILocale from './ILocale';
-
-interface ILocaleSet {
-    [langId: string]: ILocale;
-}
+export type Locale = Record<string, string>;
+type LocaleSet = Record<string, Locale>;
 
 const defaultLanguage = 'en';
 
 export default class L10n {
-
     private _language: string;
-    private _locales: ILocaleSet = {};
+    private _locales: LocaleSet = {};
 
     constructor(language: string = defaultLanguage) {
         this._language = language;
         this.loadLocale(defaultLanguage, defaultLocale);
     }
 
-    public loadLocale(language: string, locale: ILocale) {
+    public loadLocale(language: string, locale: Locale) {
         this._locales[language] = locale;
     }
 
     public get(tag: string) {
-        let locales = this._locales[this._language] || this._locales[defaultLanguage];
+        let locales =
+            this._locales[this._language] || this._locales[defaultLanguage];
 
         if (locales[tag] === undefined) {
             locales = this._locales[defaultLanguage];
@@ -65,16 +62,19 @@ export default class L10n {
         return locales[tag];
     }
 
-    public format(str: string, ...args: any[]): string {
-        str = this.get(str);
-        args.forEach((arg: any, i: number) => {
-            str = str.replace(new RegExp(`\\{${i}\\}`, 'g'), arg.toLocaleString(this._language));
+    public format(text: string, ...parameters: any[]) {
+        text = this.get(text);
+        parameters.forEach((parameter, i) => {
+            text = text.replace(
+                new RegExp(`\\{${i}\\}`, 'g'),
+                parameter.toLocaleString(this._language),
+            );
         });
 
-        return str;
+        return text;
     }
 
-    get language(): string {
+    get language() {
         return this._language;
     }
 

@@ -1,7 +1,7 @@
 /**
  * canvas-equalizer is distributed under the FreeBSD License
  *
- * Copyright (c) 2012-2017 Armando Meziat, Carlos Rafael Gimenes das Neves
+ * Copyright (c) 2012-2020 Armando Meziat, Carlos Rafael Gimenes das Neves
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,20 +31,17 @@
  * https://github.com/radiojhero/canvas-equalizer
  */
 
-/* tslint:disable:no-magic-numbers no-bitwise */
-
 import deepAssign from 'deep-assign';
 import { FFTReal } from './FFTNR';
-import IEqualizerOptions from './IEqualizerOptions';
+import EqualizerOptions from './EqualizerOptions';
 
-const defaultOptions: IEqualizerOptions = {
+const defaultOptions: EqualizerOptions = {
     validYRangeHeight: 255,
     visibleBinCount: 512,
 };
 
 export default class Equalizer {
-
-    private _options: IEqualizerOptions;
+    private _options: Required<EqualizerOptions>;
     private _visibleFrequencies: Float32Array;
     private _equivalentZones: Uint16Array;
     private _equivalentZonesFrequencyCount: Float32Array;
@@ -61,58 +58,91 @@ export default class Equalizer {
     private _audioContext: AudioContext;
     private _filterKernel: AudioBuffer;
     private _convolver: ConvolverNode;
-    private _tmp: Float32Array;
-    private _channelCurves: Int16Array[];
+    private _temporary: Float32Array;
+    private _channelCurves: [Int16Array, Int16Array];
     private _actualChannelCurve: Int16Array;
     private _channelIndex: number;
 
-    constructor(filterLength: number, audioContext: AudioContext, options: IEqualizerOptions = {}) {
+    constructor(
+        filterLength: number,
+        audioContext: AudioContext,
+        options: EqualizerOptions = {},
+    ) {
         Equalizer._validateFilterLength(filterLength);
 
-        this._options = deepAssign({}, defaultOptions, options);
+        this._options = deepAssign(
+            {} as Required<EqualizerOptions>,
+            defaultOptions,
+            options,
+        );
         this._filterLength = filterLength;
         this._sampleRate = audioContext.sampleRate || 44100;
         this._isNormalized = false;
         this._binCount = (filterLength >>> 1) + 1;
         this._audioContext = audioContext;
-        this._filterKernel = audioContext.createBuffer(2, filterLength, this._sampleRate);
-        this._tmp = new Float32Array(filterLength);
+        this._filterKernel = audioContext.createBuffer(
+            2,
+            filterLength,
+            this._sampleRate,
+        );
+        this._temporary = new Float32Array(filterLength);
         this._channelCurves = [
-            new Int16Array(this._options.visibleBinCount!), new Int16Array(this._options.visibleBinCount!)];
-        this._actualChannelCurve = new Int16Array(this._options.visibleBinCount!);
+            new Int16Array(this._options.visibleBinCount),
+            new Int16Array(this._options.visibleBinCount),
+        ];
+        this._actualChannelCurve = new Int16Array(
+            this._options.visibleBinCount,
+        );
         this._channelIndex = -1;
 
-        this._zeroChannelValueY = this._options.validYRangeHeight! >>> 1;
-        this._maximumChannelValue = this._options.validYRangeHeight! >>> 1;
-        this._minimumChannelValue = -(this._options.validYRangeHeight! >>> 1);
-        this._minusInfiniteChannelValue = -(this._options.validYRangeHeight! >>> 1) - 1;
+        this._zeroChannelValueY = this._options.validYRangeHeight >>> 1;
+        this._maximumChannelValue = this._options.validYRangeHeight >>> 1;
+        this._minimumChannelValue = -(this._options.validYRangeHeight >>> 1);
+        this._minusInfiniteChannelValue =
+            -(this._options.validYRangeHeight >>> 1) - 1;
         this._maximumChannelValueY = 0;
-        this._minimumChannelValueY = this._options.validYRangeHeight! - 1;
+        this._minimumChannelValueY = this._options.validYRangeHeight - 1;
 
-        this._visibleFrequencies = new Float32Array(this._options.visibleBinCount!);
-        this._equivalentZones = new Uint16Array([31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000]);
+        this._visibleFrequencies = new Float32Array(
+            this._options.visibleBinCount,
+        );
+        this._equivalentZones = new Uint16Array([
+            31,
+            62,
+            125,
+            250,
+            500,
+            1000,
+            2000,
+            4000,
+            8000,
+            16000,
+        ]);
 
         /* [0, +9, +9, +18, +35, +36, +70, +72, +72, +72, visibleBinCount] */
         let eqz = [0, 9, 18, 36, 71, 107, 177, 249, 321, 393, 512];
-        const ratio = this._options.visibleBinCount! / eqz[eqz.length - 1];
+        const ratio = this._options.visibleBinCount / eqz[eqz.length - 1];
         let freqSteps = [5, 5, 5, 5, 10, 10, 20, 40, 80, 89];
         const firstFreqs = [5, 50, 95, 185, 360, 720, 1420, 2860, 5740, 11498];
         let f = firstFreqs[0];
 
-        if (this._options.visibleBinCount! !== eqz[eqz.length - 1]) {
-            eqz = eqz.map((num: number) => Math.round(num * ratio));
-            freqSteps = freqSteps.map((num: number) => num / ratio);
+        if (this._options.visibleBinCount !== eqz[eqz.length - 1]) {
+            eqz = eqz.map(number => Math.round(number * ratio));
+            freqSteps = freqSteps.map(number => number / ratio);
         }
 
         this._equivalentZonesFrequencyCount = new Float32Array(eqz);
 
-        for (let i = 0, s = 0; i < this._options.visibleBinCount!; i++) {
+        for (let i = 0, s = 0; i < this._options.visibleBinCount; i++) {
             this._visibleFrequencies[i] = f;
-            if (s !== eqz.length - 1 && s !== firstFreqs.length - 1 && i + 1 >= eqz[s + 1]) {
+            if (
+                s !== eqz.length - 1 &&
+                s !== firstFreqs.length - 1 &&
+                i + 1 >= eqz[s + 1]
+            ) {
                 s++;
                 f = firstFreqs[s];
-            }
-            else {
+            } else {
                 f += freqSteps[s];
             }
         }
@@ -124,7 +154,7 @@ export default class Equalizer {
     }
 
     public reset() {
-        for (let i = this._options.visibleBinCount! - 1; i >= 0; i--) {
+        for (let i = this._options.visibleBinCount - 1; i >= 0; i--) {
             this._channelCurves[0][i] = this._zeroChannelValueY;
             this._channelCurves[1][i] = this._zeroChannelValueY;
             this._actualChannelCurve[i] = this._zeroChannelValueY;
@@ -134,21 +164,29 @@ export default class Equalizer {
         this.updateActualChannelCurve(0);
     }
 
-    public clampY(y: number): number {
+    public clampY(y: number) {
         const maxY = this._maximumChannelValueY;
         const minY = this._minimumChannelValueY;
 
-        return y <= maxY ? maxY : (y > minY ? this._options.validYRangeHeight! + 1 : y);
+        return y <= maxY
+            ? maxY
+            : y > minY
+            ? this._options.validYRangeHeight + 1
+            : y;
     }
 
-    public yToDB(y: number): number {
+    public yToDB(y: number) {
         const maxY = this._maximumChannelValueY;
         const minY = this._minimumChannelValueY;
 
-        return y <= maxY ? 40 : (y > minY ? -Infinity : Equalizer._lerp(maxY, 40, minY, -40, y));
+        return y <= maxY
+            ? 40
+            : y > minY
+            ? -Infinity
+            : Equalizer._lerp(maxY, 40, minY, -40, y);
     }
 
-    public yToMagnitude(y: number): number {
+    public yToMagnitude(y: number) {
         // 40dB = 100
         // -40dB = 0.01
         // magnitude = 10 ^ (dB/20)
@@ -158,27 +196,31 @@ export default class Equalizer {
         const maxY = this._maximumChannelValueY;
         const minY = this._minimumChannelValueY;
 
-        return y <= maxY ? 100 :
-            (y > minY ? 0 : Math.exp(Equalizer._lerp(maxY, 2, minY, -2, y) * Math.LN10)); // 2 = 40dB/20
+        return y <= maxY
+            ? 100
+            : y > minY
+            ? 0
+            : Math.exp(Equalizer._lerp(maxY, 2, minY, -2, y) * Math.LN10); // 2 = 40dB/20
     }
 
-    public magnitudeToY(magnitude: number): number {
+    public magnitudeToY(magnitude: number) {
         // 40dB = 100
         // -40dB = 0.01
         const zcy = this._zeroChannelValueY;
 
         return magnitude >= 100
-               ? this._maximumChannelValueY
-               : (magnitude < 0.01
-                  ? this._options.validYRangeHeight! + 1
-                  : Math.round((zcy - (zcy * Math.log(magnitude) / Math.LN10 * 0.5)) - 0.4));
+            ? this._maximumChannelValueY
+            : magnitude < 0.01
+            ? this._options.validYRangeHeight + 1
+            : Math.round(
+                  zcy - ((zcy * Math.log(magnitude)) / Math.LN10) * 0.5 - 0.4,
+              );
     }
 
-    public visibleBinToZoneIndex(visibleBinIndex: number): number {
-        if (visibleBinIndex >= (this._options.visibleBinCount! - 1)) {
+    public visibleBinToZoneIndex(visibleBinIndex: number) {
+        if (visibleBinIndex >= this._options.visibleBinCount - 1) {
             return this._equivalentZones.length - 1;
-        }
-        else if (visibleBinIndex > 0) {
+        } else if (visibleBinIndex > 0) {
             const z = this._equivalentZonesFrequencyCount;
 
             for (let i = z.length - 1; i >= 0; i--) {
@@ -191,29 +233,29 @@ export default class Equalizer {
         return 0;
     }
 
-    public visibleBinToFrequency(visibleBinIndex: number): number {
+    public visibleBinToFrequency(visibleBinIndex: number) {
         const vf = this._visibleFrequencies;
-        const vbc = this._options.visibleBinCount!;
+        const vbc = this._options.visibleBinCount;
 
         if (visibleBinIndex >= vbc - 1) {
             return vf[vbc - 1];
-        }
-        else if (visibleBinIndex > 0) {
+        } else if (visibleBinIndex > 0) {
             return vf[visibleBinIndex];
         }
 
         return vf[0];
     }
 
-    public visibleBinToFrequencyGroup(visibleBinIndex: number): number[] {
+    public visibleBinToFrequencyGroup(
+        visibleBinIndex: number,
+    ): [number, number] {
         const ez = this._equivalentZones;
         const vf = this._visibleFrequencies;
-        const vbc = this._options.visibleBinCount!;
+        const vbc = this._options.visibleBinCount;
 
         if (visibleBinIndex >= vbc - 1) {
             return [Math.round(vf[vbc - 1]), Math.round(ez[ez.length - 1])];
-        }
-        else if (visibleBinIndex > 0) {
+        } else if (visibleBinIndex > 0) {
             const ezc = this._equivalentZonesFrequencyCount;
 
             for (let i = ezc.length - 1; i >= 0; i--) {
@@ -250,11 +292,13 @@ export default class Equalizer {
     }
 
     public copyFilter(sourceChannel: number, destinationChannel: number) {
-        const src = this._filterKernel.getChannelData(sourceChannel);
-        const dst = this._filterKernel.getChannelData(destinationChannel);
+        const source = this._filterKernel.getChannelData(sourceChannel);
+        const destination = this._filterKernel.getChannelData(
+            destinationChannel,
+        );
 
-        for (let i = (this._filterLength - 1); i >= 0; i--) {
-            dst[i] = src[i];
+        for (let i = this._filterLength - 1; i >= 0; i--) {
+            destination[i] = source[i];
         }
 
         if (this._convolver) {
@@ -267,9 +311,9 @@ export default class Equalizer {
         const isSameFilterLR = channelIndex === -1;
         const filterLength = this._filterLength;
         const curve = this._channelCurves[channelIndex];
-        const valueCount = this._options.visibleBinCount!;
+        const valueCount = this._options.visibleBinCount;
         const bw = this._sampleRate / filterLength;
-        const filterLength2 = (filterLength >>> 1);
+        const filterLength2 = filterLength >>> 1;
         const filter = this._filterKernel.getChannelData(channelIndex);
         const _visibleFrequencies = this._visibleFrequencies;
         /* M = filterLength2, so, M_HALF_PI_FFTLEN2 = (filterLength2 * 0.5 * Math.PI) / filterLength2 */
@@ -283,7 +327,7 @@ export default class Equalizer {
             let i = 1;
             let ii = 0;
 
-            // tslint:disable-next-line:no-constant-condition
+            // eslint-disable-next-line no-constant-condition
             while (true) {
                 const freq = bw * i;
 
@@ -296,8 +340,11 @@ export default class Equalizer {
                 i++;
             }
 
-            while (bw > _visibleFrequencies[ii + 1] - _visibleFrequencies[ii] &&
-                   i < filterLength2 && ii < valueCount - 1) {
+            while (
+                bw > _visibleFrequencies[ii + 1] - _visibleFrequencies[ii] &&
+                i < filterLength2 &&
+                ii < valueCount - 1
+            ) {
                 const freq = bw * i;
                 let avg = 0;
                 let avgCount = 0;
@@ -319,22 +366,31 @@ export default class Equalizer {
 
                 if (freq >= _visibleFrequencies[valueCount - 1]) {
                     mag = this.yToMagnitude(curve[valueCount - 1]);
-                }
-                else {
-                    while (ii < (valueCount - 1) && freq > _visibleFrequencies[ii + 1]) {
+                } else {
+                    while (
+                        ii < valueCount - 1 &&
+                        freq > _visibleFrequencies[ii + 1]
+                    ) {
                         ii++;
                     }
 
                     mag = this.yToMagnitude(
-                        Equalizer._lerp(_visibleFrequencies[ii], curve[ii],
-                                       _visibleFrequencies[ii + 1], curve[ii + 1], freq));
+                        Equalizer._lerp(
+                            _visibleFrequencies[ii],
+                            curve[ii],
+                            _visibleFrequencies[ii + 1],
+                            curve[ii + 1],
+                            freq,
+                        ),
+                    );
                 }
                 filter[i << 1] = mag * invMaxMag;
             }
             // since DC and Nyquist are purely real, do not bother with them in the for loop,
             // just make sure neither one has a gain greater than 0 dB
-            filter[0] = (filter[2] >= 1 ? 1 : filter[2]);
-            filter[1] = (filter[filterLength - 2] >= 1 ? 1 : filter[filterLength - 2]);
+            filter[0] = filter[2] >= 1 ? 1 : filter[2];
+            filter[1] =
+                filter[filterLength - 2] >= 1 ? 1 : filter[filterLength - 2];
 
             // convert the coordinates from polar to rectangular
             for (i = filterLength - 2; i >= 2; i -= 2) {
@@ -355,7 +411,7 @@ export default class Equalizer {
                  * signal of the imaginary component
                  * RFFT, intel and other fft's use the opposite signal... therefore, -k MUST BE passed!!
                  */
-                filter[i + 1] = (filter[i] * Math.sin(k));
+                filter[i + 1] = filter[i] * Math.sin(k);
                 filter[i] *= Math.cos(k);
             }
 
@@ -369,7 +425,7 @@ export default class Equalizer {
                     repeat = 0;
                 }
 
-                invMaxMag = 1.0 / invMaxMag;
+                invMaxMag = 1 / invMaxMag;
             }
         } while (repeat);
 
@@ -397,10 +453,10 @@ export default class Equalizer {
     public updateActualChannelCurve(channelIndex: number) {
         const filterLength = this._filterLength;
         const curve = this._actualChannelCurve;
-        const valueCount = this._options.visibleBinCount!;
+        const valueCount = this._options.visibleBinCount;
         const bw = this._sampleRate / filterLength;
-        const filterLength2 = (filterLength >>> 1);
-        const tmp = this._tmp;
+        const filterLength2 = filterLength >>> 1;
+        const temporary = this._temporary;
         const _visibleFrequencies = this._visibleFrequencies;
         const filter = this._filterKernel.getChannelData(channelIndex);
 
@@ -410,7 +466,11 @@ export default class Equalizer {
         let i = 0;
         let ii = 0;
 
-        while (ii < valueCount - 1 && i < filterLength2 && bw > _visibleFrequencies[ii + 1] - _visibleFrequencies[ii]) {
+        while (
+            ii < valueCount - 1 &&
+            i < filterLength2 &&
+            bw > _visibleFrequencies[ii + 1] - _visibleFrequencies[ii]
+        ) {
             let freq = bw * i;
 
             while (i < filterLength2 && freq + bw < _visibleFrequencies[ii]) {
@@ -419,7 +479,14 @@ export default class Equalizer {
             }
 
             curve[ii] = this.magnitudeToY(
-                Equalizer._lerp(freq, tmp[i], freq + bw, tmp[i + 1], _visibleFrequencies[ii]));
+                Equalizer._lerp(
+                    freq,
+                    temporary[i],
+                    freq + bw,
+                    temporary[i + 1],
+                    _visibleFrequencies[ii],
+                ),
+            );
             ii++;
         }
 
@@ -431,7 +498,7 @@ export default class Equalizer {
             let avgCount = 0;
 
             do {
-                avg += tmp[i];
+                avg += temporary[i];
                 avgCount++;
                 i++;
                 freq = bw * i;
@@ -441,21 +508,22 @@ export default class Equalizer {
             ii++;
         }
 
-        i = (this._sampleRate >>> 1) >= _visibleFrequencies[valueCount - 1]
-            ? curve[ii - 1]
-            : this._options.validYRangeHeight! + 1;
+        i =
+            this._sampleRate >>> 1 >= _visibleFrequencies[valueCount - 1]
+                ? curve[ii - 1]
+                : this._options.validYRangeHeight + 1;
 
         for (; ii < valueCount; ii++) {
             curve[ii] = i;
         }
     }
 
-    private _applyWindowAndComputeActualMagnitudes(filter: Float32Array): number {
+    private _applyWindowAndComputeActualMagnitudes(filter: Float32Array) {
         const filterLength = this._filterLength;
-        const tmp = this._tmp;
-        const filterLength2 = (filterLength >>> 1);
+        const temporary = this._temporary;
+        const filterLength2 = filterLength >>> 1;
         const M = filterLength2;
-        const PI2_M = 2 * Math.PI / M;
+        const PI2_M = (2 * Math.PI) / M;
 
         // it is not possible to know what kind of window the browser will use,
         // so make an assumption here... Blackman window!
@@ -466,48 +534,60 @@ export default class Equalizer {
             /* Hamming window */
             // tmp[i] = filter[i] * (0.54 - (0.46 * cos(PI2_M * i)));
             /* Blackman window */
-            tmp[i] = filter[i] * (0.42 - (0.5 * Math.cos(PI2_M * i)) + (0.08 * Math.cos(2 * PI2_M * i)));
+            temporary[i] =
+                filter[i] *
+                (0.42 -
+                    0.5 * Math.cos(PI2_M * i) +
+                    0.08 * Math.cos(2 * PI2_M * i));
         }
 
         for (let i = filterLength - 1; i > M; i--) {
-            tmp[i] = 0;
+            temporary[i] = 0;
         }
 
         // calculate the spectrum
-        FFTReal(tmp, filterLength, 1);
+        FFTReal(temporary, filterLength, 1);
         // save Nyquist for later
-        const ii = tmp[1];
-        let maxMag = (tmp[0] > ii ? tmp[0] : ii);
+        const ii = temporary[1];
+        let maxMag = temporary[0] > ii ? temporary[0] : ii;
 
         for (let i = 2; i < filterLength; i += 2) {
-            const rval = tmp[i];
-            const ival = tmp[i + 1];
-            const mag = Math.sqrt((rval * rval) + (ival * ival));
+            const rval = temporary[i];
+            const ival = temporary[i + 1];
+            const mag = Math.sqrt(rval * rval + ival * ival);
 
-            tmp[i >>> 1] = mag;
+            temporary[i >>> 1] = mag;
             if (mag > maxMag) {
                 maxMag = mag;
             }
         }
 
         // restore Nyquist in its new position
-        tmp[filterLength2] = ii;
+        temporary[filterLength2] = ii;
         return maxMag;
     }
 
     private static _validateFilterLength(filterLength: number) {
-        if (filterLength < 8 || (filterLength & (filterLength - 1))) {
-            throw new Error('The FFT size must be power of 2 and not less than 8.');
+        if (filterLength < 8 || filterLength & (filterLength - 1)) {
+            throw new Error(
+                'The FFT size must be power of 2 and not less than 8.',
+            );
         }
     }
 
-    private static _lerp(x0: number, y0: number, x1: number, y1: number, x: number): number {
-        return ((x - x0) * (y1 - y0) / (x1 - x0)) + y0;
+    private static _lerp(
+        x0: number,
+        y0: number,
+        x1: number,
+        y1: number,
+        x: number,
+    ) {
+        return ((x - x0) * (y1 - y0)) / (x1 - x0) + y0;
     }
 
     // virtual properties
 
-    get filterLength(): number {
+    get filterLength() {
         return this._filterLength;
     }
 
@@ -516,25 +596,33 @@ export default class Equalizer {
             Equalizer._validateFilterLength(newFilterLength);
             this._filterLength = newFilterLength;
             this._binCount = (newFilterLength >>> 1) + 1;
-            this._filterKernel = this._audioContext.createBuffer(2, newFilterLength, this._sampleRate);
-            this._tmp = new Float32Array(newFilterLength);
+            this._filterKernel = this._audioContext.createBuffer(
+                2,
+                newFilterLength,
+                this._sampleRate,
+            );
+            this._temporary = new Float32Array(newFilterLength);
             this.updateFilter(true);
         }
     }
 
-    get sampleRate(): number {
+    get sampleRate() {
         return this._sampleRate;
     }
 
     set sampleRate(newSampleRate: number) {
         if (this.sampleRate !== newSampleRate) {
             this._sampleRate = newSampleRate;
-            this._filterKernel = this._audioContext.createBuffer(2, this._filterLength, newSampleRate);
+            this._filterKernel = this._audioContext.createBuffer(
+                2,
+                this._filterLength,
+                newSampleRate,
+            );
             this.updateFilter(true);
         }
     }
 
-    get isNormalized(): boolean {
+    get isNormalized() {
         return this._isNormalized;
     }
 
@@ -545,7 +633,7 @@ export default class Equalizer {
         }
     }
 
-    get audioContext(): AudioContext {
+    get audioContext() {
         return this._audioContext;
     }
 
@@ -554,7 +642,11 @@ export default class Equalizer {
             const oldConvolver = this._convolver;
             this._convolver.disconnect(0);
             this._audioContext = newAudioContext;
-            this._filterKernel = newAudioContext.createBuffer(2, this._filterLength, this._sampleRate);
+            this._filterKernel = newAudioContext.createBuffer(
+                2,
+                this._filterLength,
+                this._sampleRate,
+            );
             (this._convolver as any) = null;
             this.updateFilter(true);
             this._convolver = newAudioContext.createConvolver();
@@ -566,39 +658,43 @@ export default class Equalizer {
         }
     }
 
-    get options(): IEqualizerOptions {
-        return deepAssign({}, defaultOptions, this._options);
+    get options() {
+        return deepAssign(
+            {} as Required<EqualizerOptions>,
+            defaultOptions,
+            this._options,
+        );
     }
 
-    get visibleFrequencies(): Float32Array {
+    get visibleFrequencies() {
         return this._visibleFrequencies;
     }
 
-    get channelCurves(): Int16Array[] {
-        return this._channelCurves.slice();
+    get channelCurves() {
+        return this._channelCurves.slice() as [Int16Array, Int16Array];
     }
 
-    get actualChannelCurve(): Int16Array {
+    get actualChannelCurve() {
         return this._actualChannelCurve;
     }
 
-    get convolver(): ConvolverNode {
+    get convolver() {
         return this._convolver;
     }
 
-    get channelIndex(): number {
+    get channelIndex() {
         return this._channelIndex;
-    }
-
-    get zeroChannelValueY(): number {
-        return this._zeroChannelValueY;
-    }
-
-    get equivalentZonesFrequencyCount(): Float32Array {
-        return this._equivalentZonesFrequencyCount;
     }
 
     set channelIndex(newChannelIndex: number) {
         this._channelIndex = newChannelIndex;
+    }
+
+    get zeroChannelValueY() {
+        return this._zeroChannelValueY;
+    }
+
+    get equivalentZonesFrequencyCount() {
+        return this._equivalentZonesFrequencyCount;
     }
 }

@@ -1,15 +1,12 @@
-Contributing
-============
+# Contributing
 
 Good to see you're interested in contributing to us! Before contributing code
 or reporting an issue, you should read this document throughly, as it outlines
 all you need to know before doing so. We're a really small team after all, so
-following the guidelines here will help us address issues (including *yours*)
+following the guidelines here will help us address issues (including _yours_)
 more easily.
 
-
-Setting up development
-----------------------
+## Setting up development
 
 You must install Node.js and (optionally, yet highly recommended) Yarn first.
 You can replace `npm` with `yarn` if you did install Yarn.
@@ -21,12 +18,10 @@ You can replace `npm` with `yarn` if you did install Yarn.
 5.  If that didn't open a browser window, access `http://localhost:8080/`;
 6.  Work your magic.
 
-
-Opening issues
---------------
+## Opening issues
 
 -   Use the [issue tracker][1] to report bugs and request features or support.
--   Make sure you've searched all open *and closed* issues before opening yours.
+-   Make sure you've searched all open _and closed_ issues before opening yours.
     If your issue has been reported before, you may or may not want to
     participate on it.
 -   When reporting a bug, be sure to provide a reduced test case.
@@ -34,9 +29,7 @@ Opening issues
 
 [1]: https://github.com/radiojhero/canvas-equalizer/issues
 
-
-Submitting pull requests
-------------------------
+## Submitting pull requests
 
 -   As with issues, make sure a similar PR wasn't submitted before.
 -   Before venturing on something big, open an issue about it first. Let us know
@@ -47,9 +40,7 @@ Submitting pull requests
 -   Remember you can still push more commits to your branch when needed after
     submitting your PR; you'll probably want to do this based on feedback.
 
-
-Known issues / TODOs / Help wanted
-----------------------------------
+## Known issues / TODOs / Help wanted
 
 -   Even though the UI is responsive, the filter curves themselves aren't as
     much in the sense of appearing jagged if the UI dimensions become larger

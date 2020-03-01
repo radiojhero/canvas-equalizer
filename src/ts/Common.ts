@@ -1,7 +1,7 @@
 /**
  * canvas-equalizer is distributed under the FreeBSD License
  *
- * Copyright (c) 2012-2017 Armando Meziat, Carlos Rafael Gimenes das Neves
+ * Copyright (c) 2012-2020 Armando Meziat, Carlos Rafael Gimenes das Neves
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,24 +33,40 @@
 
 // miscellaneous functions
 
-(function (window: Window) {
+(function(window: Window) {
     try {
         new CustomEvent('test');
-    }
-    catch (e) {
+    } catch (error) {
         return; // no need to polyfill
     }
 
     // polyfills DOM4 CustomEvent
-    function MouseEvent(eventType: string, params: MouseEventInit) {
-        params = params || { bubbles: false, cancelable: false };
+    function MouseEvent(
+        eventType: string,
+        parameters: MouseEventInit = { bubbles: false, cancelable: false },
+    ) {
+        /* eslint-disable @typescript-eslint/no-non-null-assertion */
         const mouseEvent = document.createEvent('MouseEvent');
-        mouseEvent.initMouseEvent(eventType, params.bubbles!, params.cancelable!, window, 1,
-                                  params.screenX!, params.screenY!, params.clientX!, params.clientY!,
-                                  params.ctrlKey!, params.altKey!, params.shiftKey!, params.metaKey!,
-                                  0, null);
+        mouseEvent.initMouseEvent(
+            eventType,
+            parameters.bubbles!,
+            parameters.cancelable!,
+            window,
+            1,
+            parameters.screenX!,
+            parameters.screenY!,
+            parameters.clientX!,
+            parameters.clientY!,
+            parameters.ctrlKey!,
+            parameters.altKey!,
+            parameters.shiftKey!,
+            parameters.metaKey!,
+            0,
+            null,
+        );
 
         return mouseEvent;
+        /* eslint-enable @typescript-eslint/no-non-null-assertion */
     }
 
     MouseEvent.prototype = Event.prototype;
@@ -59,72 +75,103 @@
 })(window);
 
 type PointerEventShortName = 'down' | 'move' | 'up';
-type AttachDetachSignature = (observable: EventTarget, eventName: PointerEventShortName,
-                              targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) => void;
+type AttachDetachSignature = (
+    observable: EventTarget,
+    eventName: PointerEventShortName,
+    targetFunction: (e: MouseEvent) => any,
+    capturePhase?: boolean,
+) => void;
 
 let attachPointer: AttachDetachSignature;
 let detachPointer: AttachDetachSignature;
 
-function wrap(func: any, wrapper: any, tag: string, elem: EventTarget): any {
+function unwrap(func: any, tag: string, element: EventTarget): any {
+    const wrapperTag = `__${tag}_wrapper__`;
+
+    let returnValue;
+
+    if (func[wrapperTag]) {
+        func[wrapperTag] = func[wrapperTag].filter(
+            (entry: { elem: EventTarget; wrapper: any }) => {
+                if (entry.elem === element) {
+                    returnValue = entry.wrapper;
+                    return false;
+                }
+
+                return true;
+            },
+        );
+    }
+
+    return returnValue;
+}
+
+function wrap(func: any, wrapper: any, tag: string, element: EventTarget): any {
     const wrapperTag = `__${tag}_wrapper__`;
 
     if (!func[wrapperTag]) {
         func[wrapperTag] = [];
     }
 
-    unwrap(func, tag, elem);
-    func[wrapperTag].push({ elem, wrapper });
+    unwrap(func, tag, element);
+    func[wrapperTag].push({ elem: element, wrapper });
     return wrapper;
 }
 
-function unwrap(func: any, tag: string, elem: EventTarget): any {
-    const wrapperTag = `__${tag}_wrapper__`;
-
-    let ret: any;
-
-    if (func[wrapperTag]) {
-        func[wrapperTag] = func[wrapperTag].filter((entry: { elem: EventTarget, wrapper: any }, i: number) => {
-            if (entry.elem === elem) {
-                ret = entry.wrapper;
-                return false;
-            }
-
-            return true;
-        });
-    }
-
-    return ret;
+export function cancelEvent(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
 }
 
 if ((window as any).PointerEvent) {
-    attachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
-                              targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        observable.addEventListener(`pointer${eventName}`, targetFunction as EventListener, capturePhase);
+    attachPointer = function(
+        observable: EventTarget,
+        eventName: PointerEventShortName,
+        targetFunction: (e: MouseEvent) => any,
+        capturePhase?: boolean,
+    ) {
+        observable.addEventListener(
+            `pointer${eventName}`,
+            targetFunction as EventListener,
+            capturePhase,
+        );
     };
-    detachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
-                              targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        observable.removeEventListener(`pointer${eventName}`, targetFunction as EventListener, capturePhase);
+    detachPointer = function(
+        observable: EventTarget,
+        eventName: PointerEventShortName,
+        targetFunction: (e: MouseEvent) => any,
+        capturePhase?: boolean,
+    ) {
+        observable.removeEventListener(
+            `pointer${eventName}`,
+            targetFunction as EventListener,
+            capturePhase,
+        );
     };
-}
-else if ('ontouchend' in document) {
-    const mappings: any = {
+} else if ('ontouchend' in document) {
+    const mappings = {
         down: ['start'],
         move: ['move'],
         up: ['end', 'cancel'],
     };
-    attachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
-                              targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        const wrapper = (e: TouchEvent) => {
-            const touch = e.changedTouches[0];
+    attachPointer = function(
+        observable: EventTarget,
+        eventName: PointerEventShortName,
+        targetFunction: (e: MouseEvent) => any,
+        capturePhase?: boolean,
+    ) {
+        const wrapper = (event: TouchEvent) => {
+            const touch = event.changedTouches[0];
             const pseudoMouse = new MouseEvent(`mouse${eventName}`, {
-                altKey: e.altKey,
-                clientX: touch && touch.clientX || 0,
-                clientY: touch && touch.clientY || 0,
-                ctrlKey: e.ctrlKey,
-                metaKey: e.metaKey,
-                screenX: touch && touch.screenX || 0,
-                screenY: touch && touch.screenY || 0,
-                shiftKey: e.shiftKey,
+                altKey: event.altKey,
+                clientX: (touch && touch.clientX) || 0,
+                clientY: (touch && touch.clientY) || 0,
+                ctrlKey: event.ctrlKey,
+                metaKey: event.metaKey,
+                screenX: (touch && touch.screenX) || 0,
+                screenY: (touch && touch.screenY) || 0,
+                shiftKey: event.shiftKey,
             });
 
             (pseudoMouse as any).clonedFromTouch = true;
@@ -132,33 +179,58 @@ else if ('ontouchend' in document) {
             const result = targetFunction(pseudoMouse);
 
             if (result === false || pseudoMouse.defaultPrevented) {
-                cancelEvent(e);
+                cancelEvent(event);
             }
 
             return result;
         };
 
-        mappings[eventName].forEach((mapping: string) => {
-            observable.addEventListener(`touch${mapping}`,
-                wrap(targetFunction, wrapper, `touch${eventName}`, observable), capturePhase);
+        mappings[eventName].forEach(mapping => {
+            observable.addEventListener(
+                `touch${mapping}`,
+                wrap(targetFunction, wrapper, `touch${eventName}`, observable),
+                capturePhase,
+            );
         });
     };
-    detachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
-                              targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        mappings[eventName].forEach((mapping: string) => {
-            observable.removeEventListener(`touch${mapping}`,
-                unwrap(targetFunction, `touch${eventName}`, observable), capturePhase);
+    detachPointer = function(
+        observable: EventTarget,
+        eventName: PointerEventShortName,
+        targetFunction: (e: MouseEvent) => any,
+        capturePhase?: boolean,
+    ) {
+        mappings[eventName].forEach(mapping => {
+            observable.removeEventListener(
+                `touch${mapping}`,
+                unwrap(targetFunction, `touch${eventName}`, observable),
+                capturePhase,
+            );
         });
     };
-}
-else {
-    attachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
-                              targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        observable.addEventListener(`mouse${eventName}`, targetFunction as EventListener, capturePhase);
+} else {
+    attachPointer = function(
+        observable: EventTarget,
+        eventName: PointerEventShortName,
+        targetFunction: (e: MouseEvent) => any,
+        capturePhase?: boolean,
+    ) {
+        observable.addEventListener(
+            `mouse${eventName}`,
+            targetFunction as EventListener,
+            capturePhase,
+        );
     };
-    detachPointer = function (observable: EventTarget, eventName: PointerEventShortName,
-                              targetFunction: (e: MouseEvent) => any, capturePhase?: boolean) {
-        observable.removeEventListener(`mouse${eventName}`, targetFunction as EventListener, capturePhase);
+    detachPointer = function(
+        observable: EventTarget,
+        eventName: PointerEventShortName,
+        targetFunction: (e: MouseEvent) => any,
+        capturePhase?: boolean,
+    ) {
+        observable.removeEventListener(
+            `mouse${eventName}`,
+            targetFunction as EventListener,
+            capturePhase,
+        );
     };
 }
 
@@ -182,12 +254,13 @@ export const keyFix: any = {
 };
 /* tslint:enable:no-magic-numbers object-literal-sort-keys */
 
-export function keyPressed(e: KeyboardEvent, ...chars: string[]) {
-    for (let i = 0; i < chars.length; i++) {
-        const chr = chars[i];
-        if (Object.keys(keyFix).indexOf(chr) !== -1) {
-            const [key, keyCode] = Array.isArray(keyFix[chr]) ? keyFix[chr] : [chr, keyFix[chr]];
-            if (e.key === key || e.keyCode === keyCode) {
+export function keyPressed(event: KeyboardEvent, ...chars: string[]) {
+    for (const chr of chars) {
+        if (Object.keys(keyFix).includes(chr)) {
+            const [key, keyCode] = Array.isArray(keyFix[chr])
+                ? keyFix[chr]
+                : [chr, keyFix[chr]];
+            if (event.key === key || event.keyCode === keyCode) {
                 return true;
             }
         }
@@ -195,14 +268,8 @@ export function keyPressed(e: KeyboardEvent, ...chars: string[]) {
     return false;
 }
 
-export function cancelEvent(e: Event) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-}
-
 export function throttledFunction(func: () => void, timeout?: number) {
-    if (runningFuncs.indexOf(func) === -1) {
+    if (!runningFuncs.includes(func)) {
         runningFuncs.push(func);
         const wrapper = () => {
             func();
@@ -211,44 +278,57 @@ export function throttledFunction(func: () => void, timeout?: number) {
 
         if (timeout) {
             setTimeout(wrapper, timeout);
-        }
-        else {
+        } else {
             requestAnimationFrame(wrapper);
         }
     }
 }
 
-export function addThrottledEvent(observable: EventTarget,
-                                  eventName: string,
-                                  targetFunction: (e?: Event) => any,
-                                  capturePhase?: boolean) {
+export function addThrottledEvent(
+    observable: EventTarget,
+    eventName: string,
+    targetFunction: (e?: Event) => any,
+    capturePhase?: boolean,
+) {
     let running = false;
-    const wrapper = (e: Event) => {
+    const wrapper = (event: Event) => {
         if (!running) {
             running = true;
             requestAnimationFrame(() => {
-                targetFunction(e);
+                targetFunction(event);
                 running = false;
             });
         }
     };
 
-    observable.addEventListener(eventName,
-        wrap(targetFunction, wrapper, `throttle${eventName}`, observable), capturePhase);
+    observable.addEventListener(
+        eventName,
+        wrap(targetFunction, wrapper, `throttle${eventName}`, observable),
+        capturePhase,
+    );
 }
 
-export function removeThrottledEvent(observable: EventTarget,
-                                     eventName: string,
-                                     targetFunction: (e?: Event) => any,
-                                     capturePhase?: boolean) {
-    observable.removeEventListener(eventName,
-        unwrap(targetFunction, `throttle${eventName}`, observable), capturePhase);
+export function removeThrottledEvent(
+    observable: EventTarget,
+    eventName: string,
+    targetFunction: (e?: Event) => any,
+    capturePhase?: boolean,
+) {
+    observable.removeEventListener(
+        eventName,
+        unwrap(targetFunction, `throttle${eventName}`, observable),
+        capturePhase,
+    );
 }
 
-export function elemCoords(elem: HTMLElement, e: MouseEvent): { x: number, y: number } {
-    const rect = elem.getBoundingClientRect();
+export function elementCoordinates(element: HTMLElement, event: MouseEvent) {
+    const rect = element.getBoundingClientRect();
     return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
     };
+}
+
+export function devicePixelRatio() {
+    return window.devicePixelRatio || 1;
 }

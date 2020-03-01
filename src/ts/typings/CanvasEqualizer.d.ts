@@ -1,7 +1,7 @@
 /**
  * canvas-equalizer is distributed under the FreeBSD License
  *
- * Copyright (c) 2012-2017 Armando Meziat, Carlos Rafael Gimenes das Neves
+ * Copyright (c) 2012-2020 Armando Meziat, Carlos Rafael Gimenes das Neves
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,17 +28,18 @@
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the FreeBSD Project.
  *
- * https://github.com/kantoradio/canvas-equalizer
+ * https://github.com/radiojhero/canvas-equalizer
  */
 
-export as namespace CanvasEqualizer;
-export = CanvasEqualizer;
-
 declare class CanvasEqualizer {
-    constructor(filterLength: number, audioContext: AudioContext, options?: CanvasEqualizer.ICanvasEqualizerOptions);
+    constructor(
+        filterLength: number,
+        audioContext: AudioContext,
+        options?: CanvasEqualizer.CanvasEqualizerOptions,
+    );
     public createControl(placeholder: HTMLElement): HTMLCanvasElement;
     public destroyControl(): void;
-    public loadLocale(language: string, locale: CanvasEqualizer.ILocale): void;
+    public loadLocale(language: string, locale: CanvasEqualizer.Locale): void;
     public filterLength: number;
     public sampleRate: number;
     public audioContext: AudioContext;
@@ -48,21 +49,21 @@ declare class CanvasEqualizer {
 }
 
 declare namespace CanvasEqualizer {
+    export type Locale = Record<string, string>;
 
-    export interface ILocale {
-        [stringId: string]: string;
-    }
-
-    export interface IEqualizerOptions {
+    export interface EqualizerOptions {
         visibleBinCount?: number;
         validYRangeHeight?: number;
     }
 
-    export interface ICanvasEqualizerOptions {
+    export interface CanvasEqualizerOptions {
         updateFilterOnDrag?: boolean;
         autohideBar?: boolean;
         classNamespace?: string;
         language?: string;
-        filterOptions: IEqualizerOptions;
+        filterOptions: EqualizerOptions;
     }
 }
+
+export as namespace CanvasEqualizer;
+export = CanvasEqualizer;

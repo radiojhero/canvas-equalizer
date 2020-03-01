@@ -1,5 +1,4 @@
-canvas-equalizer
-================
+# canvas-equalizer
 
 [![Version](http://badge.fury.io/gh/radiojhero%2Fcanvas-equalizer.svg)](http://badge.fury.io/gh/radiojhero%2Fcanvas-equalizer)
 [![Dependencies status](https://david-dm.org/radiojhero/canvas-equalizer.svg)](https://david-dm.org/radiojhero/canvas-equalizer)
@@ -26,9 +25,7 @@ graphic equalizer to Web technologies, with a few important differences:
 -   RTL support;
 -   Can be installed via NPM or Yarn.
 
-
-Installation
-------------
+## Installation
 
 Install it with one of the following commands:
 
@@ -48,29 +45,7 @@ var CanvasEqualizer = require('canvas-equalizer'); // CommonJS
 Last, but not least: the `CanvasEqualizer.css` stylesheet includes styles for
 the UI, including its "status bar".
 
-### Bower ###
-
-If you're using Bower instead, you'll need [`bower-npm-resolver`][1]. Follow the
-instructions therein, then:
-
-[1]: https://github.com/mjeanroy/bower-npm-resolver
-
-```bash
-$ bower install --save npm:canvas-equalizer
-```
-
-(the `npm:` bit is important!)
-
-Next, include the files, which will add `CanvasEqualizer` to the global scope:
-
-```html
-<link rel="stylesheet" href="bower_components/canvas-equalizer/dist/css/CanvasEqualizer.min.css">
-<script src="bower_components/canvas-equalizer/dist/js/CanvasEqualizer.min.js"></script>
-```
-
-
-Usage
------
+## Usage
 
 ```js
 const equalizer = new CanvasEqualizer(
@@ -78,7 +53,7 @@ const equalizer = new CanvasEqualizer(
     filterLength,
 
     // an AudioContext object
-    audioContext, 
+    audioContext,
 
     // additional, optional parameters with respective defaults
     {
@@ -95,7 +70,7 @@ const equalizer = new CanvasEqualizer(
         filterOptions: {
             // how many points the curves will actually have in the UI
             visibleBinCount: 512,
-            
+
             // when needed, the height of a point in the curve will be
             // converted from the dB range (+40 dB to -40 dB) to an integer
             // range (zero to this value); must be an odd number
@@ -134,9 +109,7 @@ The code in the `demo` folder can be used as a demo on how to load and generate
 files during runtime (using the [File API][2] and the [Web Worker API][3]) in
 client-side JavaScript.
 
-
-Compatibility
--------------
+## Compatibility
 
 This project uses the [Web Audio API][4] and requires a [compliant browser][5]
 to run properly. In [Firefox 23 and 24][6], Web Audio API must be enabled
@@ -152,9 +125,7 @@ If running the demo locally, Chrome must be started with the command-line
 option `--allow-file-access-from-files`, otherwise you will not be able to load
 any files!
 
-
-License
--------
+## License
 
 This project is licensed under the terms of the FreeBSD License.
 See `LICENSE.md` for more details.

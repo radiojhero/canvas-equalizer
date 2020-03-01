@@ -1,7 +1,7 @@
 /**
  * canvas-equalizer is distributed under the FreeBSD License
  *
- * Copyright (c) 2012-2017 Armando Meziat, Carlos Rafael Gimenes das Neves
+ * Copyright (c) 2012-2020 Armando Meziat, Carlos Rafael Gimenes das Neves
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,14 +31,13 @@
  * https://github.com/radiojhero/canvas-equalizer
  */
 
-import IEqualizerOptions from './IEqualizerOptions';
+export type ConvolverCallback = (
+    oldConvolver: ConvolverNode,
+    newConvolver: ConvolverNode,
+) => void;
 
-interface ICanvasEqualizerOptions {
-    updateFilterOnDrag?: boolean;
-    autohideBar?: number;
-    classNamespace?: string;
-    language?: string;
-    filterOptions?: IEqualizerOptions;
+export default interface EqualizerOptions {
+    visibleBinCount?: number;
+    validYRangeHeight?: number;
+    convolverCallback?: ConvolverCallback;
 }
-
-export default ICanvasEqualizerOptions;

@@ -1,7 +1,7 @@
 /**
  * canvas-equalizer is distributed under the FreeBSD License
  *
- * Copyright (c) 2012-2017 Armando Meziat, Carlos Rafael Gimenes das Neves
+ * Copyright (c) 2012-2020 Armando Meziat, Carlos Rafael Gimenes das Neves
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,8 +52,6 @@
  * time [length-2]   | Real [bin length/2-1]
  * time [length-1]   | Imag [bin length/2-1]
  */
-
-/* tslint:disable:no-magic-numbers no-bitwise */
 
 export function FFTComplex(data: Float32Array, n: number, isign: number) {
     const nn = n << 1;
@@ -154,7 +152,7 @@ export function FFTComplex(data: Float32Array, n: number, isign: number) {
         wpi = Math.sin(theta);
         theta *= 0.5;
         wpr = Math.sin(theta);
-        wpr *= -2.0 * wpr;
+        wpr *= -2 * wpr;
 
         // ---------------------------------------------
         // special case for the inner loop when m = 1:
@@ -169,24 +167,24 @@ export function FFTComplex(data: Float32Array, n: number, isign: number) {
             data[i] += tempi;
         }
 
-        wr = 1.0 + wpr;
+        wr = 1 + wpr;
         wi = wpi;
         // ---------------------------------------------
 
-        halfmmax = ((mmax >>> 1) + 1);
+        halfmmax = (mmax >>> 1) + 1;
 
         for (m = 3; m < halfmmax; m += 2) {
             for (i = m; i <= nn; i += istep) {
                 j = i + mmax;
-                tempr = (wr * (dj1 = data[j - 1])) - (wi * (dj = data[j]));
-                tempi = (wr * dj) + (wi * dj1);
+                tempr = wr * (dj1 = data[j - 1]) - wi * (dj = data[j]);
+                tempi = wr * dj + wi * dj1;
                 data[j - 1] = data[i - 1] - tempr;
                 data[j] = data[i] - tempi;
                 data[i - 1] += tempr;
                 data[i] += tempi;
             }
-            wr += ((tempr = wr) * wpr) - (wi * wpi);
-            wi += (wi * wpr) + (tempr * wpi);
+            wr += (tempr = wr) * wpr - wi * wpi;
+            wi += wi * wpr + tempr * wpi;
         }
 
         // ---------------------------------------------
@@ -203,9 +201,8 @@ export function FFTComplex(data: Float32Array, n: number, isign: number) {
                 data[i] += tempi;
             }
             wr = -wpi;
-            wi = 1.0 + wpr;
-        }
-        else {
+            wi = 1 + wpr;
+        } else {
             for (i = m; i <= nn; i += istep) {
                 j = i + mmax;
                 tempr = data[j];
@@ -216,7 +213,7 @@ export function FFTComplex(data: Float32Array, n: number, isign: number) {
                 data[i] += tempi;
             }
             wr = wpi;
-            wi = -1.0 - wpr;
+            wi = -1 - wpr;
         }
 
         m += 2;
@@ -225,15 +222,15 @@ export function FFTComplex(data: Float32Array, n: number, isign: number) {
         for (; m < mmax; m += 2) {
             for (i = m; i <= nn; i += istep) {
                 j = i + mmax;
-                tempr = (wr * (dj1 = data[j - 1])) - (wi * (dj = data[j]));
-                tempi = (wr * dj) + (wi * dj1);
+                tempr = wr * (dj1 = data[j - 1]) - wi * (dj = data[j]);
+                tempi = wr * dj + wi * dj1;
                 data[j - 1] = data[i - 1] - tempr;
                 data[j] = data[i] - tempi;
                 data[i - 1] += tempr;
                 data[i] += tempi;
             }
-            wr += ((tempr = wr) * wpr) - (wi * wpi);
-            wi += (wi * wpr) + (tempr * wpi);
+            wr += (tempr = wr) * wpr - wi * wpi;
+            wi += wi * wpr + tempr * wpi;
         }
 
         mmax = istep;
@@ -265,40 +262,38 @@ export function FFTReal(data: Float32Array, n: number, isign: number) {
     if (isign === 1) {
         c2 = -0.5;
         FFTComplex(data, n >>> 1, 1);
-    }
-    else {
+    } else {
         c2 = 0.5;
         theta = -theta;
     }
 
     wpr = Math.sin(0.5 * theta);
-    wr = 1.0 + (wpr *= (-2.0 * wpr));
-    wi = (wpi = Math.sin(theta));
+    wr = 1 + (wpr *= -2 * wpr);
+    wi = wpi = Math.sin(theta);
 
     for (i = 1; i < n4; i++) {
-        i2 = 1 + (i1 = (i << 1));
-        i4 = 1 + (i3 = (n - i1));
+        i2 = 1 + (i1 = i << 1);
+        i4 = 1 + (i3 = n - i1);
         h1r = 0.5 * ((d1 = data[i1]) + (d3 = data[i3]));
         h1i = 0.5 * ((d2 = data[i2]) - (d4 = data[i4]));
         h2r = -c2 * (d2 + d4);
         h2i = c2 * (d1 - d3);
-        data[i1] = h1r + (d1 = (wr * h2r)) - (d2 = (wi * h2i));
-        data[i2] = h1i + (d3 = (wr * h2i)) + (d4 = (wi * h2r));
+        data[i1] = h1r + (d1 = wr * h2r) - (d2 = wi * h2i);
+        data[i2] = h1i + (d3 = wr * h2i) + (d4 = wi * h2r);
         data[i3] = h1r - d1 + d2;
         data[i4] = d3 + d4 - h1i;
-        wr += ((h1r = wr) * wpr) - (wi * wpi);
-        wi += (wi * wpr) + (h1r * wpi);
+        wr += (h1r = wr) * wpr - wi * wpi;
+        wi += wi * wpr + h1r * wpi;
     }
 
     if (isign === 1) {
         data[0] = (h1r = data[0]) + data[1];
         data[1] = h1r - data[1];
-    }
-    else {
+    } else {
         data[0] = 0.5 * ((h1r = data[0]) + data[1]);
         data[1] = 0.5 * (h1r - data[1]);
         FFTComplex(data, n >>> 1, -1);
-        h1r = 2.0 / n;
+        h1r = 2 / n;
 
         for (i = n - 1; i >= 0; i--) {
             data[i] *= h1r;

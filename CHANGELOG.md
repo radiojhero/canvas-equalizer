@@ -1,5 +1,4 @@
-Changelog
-=========
+# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -8,34 +7,37 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!--
 
-[X.X.X] - 20XX-XX-XX
---------------------
+## [X.X.X] - 20XX-XX-XX
 
 Nothing relevant yet.
 
-### Added ###
-### Changed ###
-### Deprecated ###
-### Removed ###
-### Fixed ###
-### Security ###
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
 
 -->
 
-[Unreleased]
-------------
+## [Unreleased]
 
-### Changed ###
+### Changed
+
 -   Switched Webpack for Rollup;
 -   Updated convolver behavior to match spec.
 
-
-0.2.0 - 2017-03-12
-------------------
+## 0.2.0 - 2017-03-12
 
 This is a fork of Carlos Rafael Gimenes das Neves's [GraphicalFilterEditor].
 
-### Added ###
+### Added
+
 -   Responsive UI (including DPI awareness);
 -   Built using Webpack;
 -   Code linting;
@@ -43,7 +45,8 @@ This is a fork of Carlos Rafael Gimenes das Neves's [GraphicalFilterEditor].
 -   RTL support;
 -   Can be installed via NPM or Yarn.
 
-### Changed ###
+### Changed
+
 -   Analyser files have been moved to the demo;
 -   The demo is on its own branch;
 -   Everything but the demo has been ported to TypeScript;
@@ -51,7 +54,5 @@ This is a fork of Carlos Rafael Gimenes das Neves's [GraphicalFilterEditor].
 -   Refactored mouse and touch event handling to use Pointer Events
     when available.
 
-
-[Unreleased]: https://github.com/radiojhero/canvas-equalizer/compare/v0.2.0...HEAD
-
-[GraphicalFilterEditor]: https://github.com/carlosrafaelgn/GraphicalFilterEditor
+[unreleased]: https://github.com/radiojhero/canvas-equalizer/compare/v0.2.0...HEAD
+[graphicalfiltereditor]: https://github.com/carlosrafaelgn/GraphicalFilterEditor
